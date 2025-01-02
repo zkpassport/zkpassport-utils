@@ -62,7 +62,7 @@
   },
   "sideEffects": false,
   "scripts": {
-    "prepare": "npm run build",
+    "prepare" :"npm run build:esm && npm run build:types",
     "build": "npm run build:esm && npm run build:types",
     "build:esm": "tsc --outDir dist/esm --module esnext",
     "build:cjs": "tsc --outDir dist/cjs --module commonjs",
