@@ -1,7 +1,7 @@
-import { Binary } from "../binary"
+import { Binary } from "@/binary"
 import { beforeAll, describe, expect, it } from "bun:test"
 import { readFile } from "fs/promises"
-import { SOD } from "./sod"
+import { SOD } from "@/passport-reader/sod"
 import path from "path"
 
 const FIXTURES_PATH = "src/ts/tests/fixtures"

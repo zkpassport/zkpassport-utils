@@ -1,6 +1,6 @@
-import { Binary } from "../binary"
-import { BB_THREADS, CERT_TYPE_CSC, CERTIFICATE_REGISTRY_ID, TBS_MAX_SIZE } from "../constants"
-import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "../types"
+import { Binary } from "@/binary"
+import { BB_THREADS, CERT_TYPE_CSC, CERTIFICATE_REGISTRY_ID, TBS_MAX_SIZE } from "@/constants"
+import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "@/types"
 import { BarretenbergSync, Fr, UltraHonkBackend } from "@aztec/bb.js"
 import { CompiledCircuit, InputMap, Noir } from "@noir-lang/noir_js"
 import { ProofData } from "@noir-lang/types"
@@ -166,4 +166,4 @@ export function getCertificateLeafHash(
 }
 
 
-export { DisclosedData, createDisclosedDataRaw } from "./disclose";
+export { DisclosedData, createDisclosedDataRaw } from "@/circuits/disclose";

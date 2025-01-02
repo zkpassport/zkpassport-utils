@@ -1,6 +1,6 @@
 import { createHash } from "crypto"
-import { ASN, id_ldsSecurityObject } from "./asn"
-import { Binary } from "../binary"
+import { ASN, id_ldsSecurityObject } from "@/passport-reader/asn"
+import { Binary } from "@/binary"
 import {
   Attribute,
   CertificateChoices,

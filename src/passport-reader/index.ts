@@ -1,5 +1,5 @@
-export { PassportReader } from "./passport-reader"
-export { SOD } from "./sod"
+export { PassportReader } from "@/passport-reader/passport-reader"
+export { SOD } from "@/passport-reader/sod"
 export {
   generateSigningCertificates,
   signSodWithRsaKey,
@@ -8,14 +8,14 @@ export {
   saveDG1ToFile,
   saveDscKeypairToFile,
   loadDscKeypairFromFile
-} from "./passport-generator"
+} from "@/passport-reader/passport-generator"
 export {
   generateSod,
   generateSampleDSC,
   wrapSodInContentInfo,
   generateEncapContentInfo,
   generateSignedAttrs
-} from "./sod-generator"
-export * from "./oids"
-export * from "./constants"
-export * from "./asn"
+} from "@/passport-reader/sod-generator"
+export * from "@/passport-reader/oids"
+export * from "@/passport-reader/constants"
+export * from "@/passport-reader/asn"

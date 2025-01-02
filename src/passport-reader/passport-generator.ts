@@ -4,8 +4,8 @@ import { AsnConvert, AsnSerializer, OctetString } from "@peculiar/asn1-schema"
 import { Certificate } from "@peculiar/asn1-x509"
 import * as fs from "fs"
 import forge from "node-forge"
-import { ASN } from "./asn"
-import { wrapSodInContentInfo } from "./sod-generator"
+import { ASN } from "@/passport-reader/asn"
+import { wrapSodInContentInfo } from "@/passport-reader/sod-generator"
 
 export function generateSigningCertificates(
   {

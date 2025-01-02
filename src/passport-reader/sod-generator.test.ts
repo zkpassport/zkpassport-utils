@@ -2,9 +2,9 @@ import { CertificateChoices, id_signedData, SignedData } from "@peculiar/asn1-cm
 import { AsnConvert } from "@peculiar/asn1-schema"
 import { Version } from "@peculiar/asn1-x509"
 import { describe, it, expect } from "bun:test"
-import { ASN, id_sha256 } from "./asn"
-import { generateSampleDSC, generateSod } from "./sod-generator"
-import { Binary } from "../binary"
+import { ASN, id_sha256 } from "@/passport-reader/asn"
+import { generateSampleDSC, generateSod } from "@/passport-reader/sod-generator"
+import { Binary } from "@/binary"
 import { createHash } from "crypto"
 
 describe("SOD", () => {

@@ -1,4 +1,4 @@
-import { Binary } from "./binary"
+import { Binary } from "@/binary"
 import { BarretenbergSync, Fr } from "@aztec/bb.js"
 import { LeanIMT } from "@zk-kit/lean-imt"
 

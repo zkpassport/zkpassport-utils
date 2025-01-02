@@ -1,5 +1,5 @@
 import type { Alpha2Code, Alpha3Code, CountryName } from "i18n-iso-countries"
-import type { SOD } from "../passport-reader"
+import type { SOD } from "@/passport-reader"
 
 export type SavedPassport = {
   id: string

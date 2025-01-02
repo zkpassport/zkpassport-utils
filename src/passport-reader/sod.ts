@@ -1,7 +1,7 @@
-import { Binary } from "../binary"
-import { ASN } from "./asn"
+import { Binary } from "@/binary"
+import { ASN } from "@/passport-reader/asn"
 import { AsnConvert, AsnParser, AsnSerializer } from "@peculiar/asn1-schema"
-import { decodeOID, getHashAlgorithmName, getOIDName } from "./oids"
+import { decodeOID, getHashAlgorithmName, getOIDName } from "@/passport-reader/oids"
 import { inspect } from "util"
 
 export type DigestAlgorithm = "SHA1" | "SHA224" | "SHA256" | "SHA384" | "SHA512"

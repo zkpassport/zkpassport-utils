@@ -1,12 +1,12 @@
-import cscMasterlistFile from "./assets/certificates/csc-masterlist.json"
+import cscMasterlistFile from "@/assets/certificates/csc-masterlist.json"
 import {
   CERTIFICATE_PAD_EMPTY_LEAVES,
   CERTIFICATE_REGISTRY_HEIGHT,
   CERTIFICATE_REGISTRY_ID,
   DG1_INPUT_SIZE,
   SIGNED_ATTR_INPUT_SIZE,
-} from "./constants"
-import { computeMerkleProof } from "./merkle-tree"
+} from "@/constants"
+import { computeMerkleProof } from "@/merkle-tree"
 import {
   Certificate,
   CSCMasterlist,
@@ -19,12 +19,12 @@ import {
   Query,
   RSACSCPublicKey,
   RSADSCDataInputs,
-} from "./types"
+} from "@/types"
 import { AsnParser } from "@peculiar/asn1-schema"
 import { AuthorityKeyIdentifier, PrivateKeyUsagePeriod } from "@peculiar/asn1-x509"
 import { format } from "date-fns"
-import { redcLimbsFromBytes } from "./barrett-reduction"
-import { Binary } from "./binary"
+import { redcLimbsFromBytes } from "@/barrett-reduction"
+import { Binary } from "@/binary"
 import {
   calculatePrivateNullifier,
   getCertificateLeafHash,
@@ -38,14 +38,14 @@ import {
   getECDSAInfo,
   getRSAInfo,
   getSodSignatureAlgorithmType,
-} from "./passport-reader/passport-reader"
+} from "@/passport-reader/passport-reader"
 import {
   bigintToBytes,
   bigintToNumber,
   getBitSize,
   getOffsetInArray,
   padArrayWithZeros,
-} from "./utils"
+} from "@/utils"
 
 export function isSignatureAlgorithmSupported(
   passport: PassportViewModel,

@@ -10,7 +10,7 @@ import { p256 } from "@noble/curves/p256"
 import { p384 } from "@noble/curves/p384"
 import { p521 } from "@noble/curves/p521"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
-import { Certificate, SignatureAlgorithm } from "./types"
+import { Certificate, SignatureAlgorithm } from "@/types"
 
 const OIDS_TO_DESCRIPTION: Record<string, string> = {
   "1.2.840.113549.1.1.1": "rsaEncryption",
