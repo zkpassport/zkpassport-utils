@@ -1,11 +1,11 @@
-// Node.js specific code
-const util = await loadModule("util")
-
 import { Binary } from "../binary"
 import { ASN } from "./asn"
 import { AsnConvert, AsnParser, AsnSerializer } from "@peculiar/asn1-schema"
 import { decodeOID, getHashAlgorithmName, getOIDName } from "./oids"
 import { loadModule } from "@/utils"
+
+// Node.js specific code
+const util = await loadModule("util")
 
 export type DigestAlgorithm = "SHA1" | "SHA224" | "SHA256" | "SHA384" | "SHA512"
 export type SignatureAlgorithm =

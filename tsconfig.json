@@ -7,7 +7,7 @@
     "skipLibCheck": true,
     "target": "esnext",
     "module": "preserve",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": ".",

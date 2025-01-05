@@ -1,24 +1,12 @@
-import { CompiledCircuit } from "@noir-lang/types"
+import { AsnSerializer } from "@peculiar/asn1-schema"
 
 export async function loadModule(module: string) {
   try {
-    if (typeof require !== 'undefined') {
-      // React Native and Node.js environment
-      return require(module);
-    } else {
-      // Web environment
-      return await import(module);
-    }
+    return require(module);
   } catch {
     return undefined;
   }
 }
-
-let fs = await loadModule('fs/promises')
-
-let noirWasm: { createFileManager: any; compile_program: any } | undefined = await loadModule("@noir-lang/noir_wasm")
-
-import { AsnSerializer } from "@peculiar/asn1-schema"
 
 /**
  * Convert a little-endian buffer into a BigInt.
@@ -115,36 +103,6 @@ export function fromHex(value: string): Buffer {
  */
 export function strip0x(input: string): string {
   return input.startsWith("0x") ? input.slice(2) : input
-}
-
-/**
- * Loads a circuit manifest from a JSON file.
- * @param filename - The path to the JSON file.
- * @returns The compiled circuit.
- */
-export async function loadCircuitManifest(filename: string): Promise<CompiledCircuit> {
-  try {
-    if (!fs) {
-      throw new Error('File system operations are only available in Node.js environment');
-    }
-    return JSON.parse(await fs.readFile(filename, "utf-8"))
-  } catch (error) {
-    throw new Error(`${filename} is not valid JSON`)
-  }
-}
-
-/**
- * Compiles a circuit from the specified path.
- * @param path - The path to the circuit file.
- * @returns The compiled circuit.
- */
-export async function compileCircuit(path: string): Promise<CompiledCircuit> {
-  if (!noirWasm) {
-    throw new Error('@noir-lang/noir_wasm is not available. Please install it as a dependency to use circuit compilation features.');
-  }
-  const fm = noirWasm.createFileManager(path)
-  const myCompiledCode = await noirWasm.compile_program(fm)
-  return myCompiledCode.program
 }
 
 export function fromBytesToBigInt(bytes: number[]): bigint {
