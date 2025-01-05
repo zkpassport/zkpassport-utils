@@ -1,9 +1,7 @@
 {
   "name": "@zkpassport/utils",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
   "files": [
     "src/",
@@ -13,52 +11,42 @@
   "exports": {
     "./binary": {
       "import": "./dist/esm/binary/index.js",
-      "require": "./dist/cjs/binary/index.js",
       "types": "./dist/types/binary/index.d.ts"
     },
     "./rsa": {
       "import": "./dist/esm/rsa.js",
-      "require": "./dist/cjs/rsa.js",
       "types": "./dist/types/rsa.d.ts"
     },
     "./circuits": {
       "import": "./dist/esm/circuits/index.js",
-      "require": "./dist/cjs/circuits/index.js",
       "types": "./dist/types/circuits/index.d.ts"
     },
     "./circuit-matcher": {
       "import": "./dist/esm/circuit-matcher.js",
-      "require": "./dist/cjs/circuit-matcher.js",
       "types": "./dist/types/circuit-matcher.d.ts"
     },
     "./merkle-tree": {
       "import": "./dist/esm/merkle-tree.js",
-      "require": "./dist/cjs/merkle-tree.js",
       "types": "./dist/types/merkle-tree.d.ts"
     },
     "./passport-reader": {
       "import": "./dist/esm/passport-reader/index.js",
-      "require": "./dist/cjs/passport-reader/index.js",
       "types": "./dist/types/passport-reader/index.d.ts"
     },
     "./utils": {
       "import": "./dist/esm/utils.js",
-      "require": "./dist/cjs/utils.js",
       "types": "./dist/types/utils.d.ts"
     },
     "./barrett-reduction": {
       "import": "./dist/esm/barrett-reduction.js",
-      "require": "./dist/cjs/barrett-reduction.js",
       "types": "./dist/types/barrett-reduction.d.ts"
     },
     "./csc-manager": {
       "import": "./dist/esm/csc-manager.js",
-      "require": "./dist/cjs/csc-manager.js",
       "types": "./dist/types/csc-manager.d.ts"
     },
     "./test-helper": {
       "import": "./dist/esm/test-helper.js",
-      "require": "./dist/cjs/test-helper.js",
       "types": "./dist/types/test-helper.d.ts"
     },
     "./types": {
@@ -99,6 +87,7 @@
     "@peculiar/asn1-x509": "^2.3.13",
     "@peculiar/x509": "^1.12.3",
     "@zk-kit/lean-imt": "^2.2.1",
+    "@zkpassport/poseidon2": "^0.5.0",
     "date-fns": "^4.1.0",
     "i18n-iso-countries": "^7.13.0",
     "node-forge": "^1.3.1"

@@ -5,6 +5,7 @@ import { CompiledCircuit, InputMap, Noir } from "@noir-lang/noir_js"
 import { ProofData } from "@noir-lang/types"
 import { readFileSync } from "fs"
 import path from "path"
+import { hashToField } from "@zkpassport/poseidon2/bn254"
 
 let bb: any = null
 let Fr: any = null
@@ -101,12 +102,10 @@ export class Circuit {
 
 export function calculatePrivateNullifier(dg1: Binary, sodSig: Binary): Binary {
   return Binary.from(
-    bb
-      .poseidon2Hash([
-        ...Array.from(dg1).map((x) => new Fr(BigInt(x))),
-        ...Array.from(sodSig).map((x) => new Fr(BigInt(x))),
-      ])
-      .toBuffer(),
+   hashToField([
+    ...Array.from(dg1).map((x) => BigInt(x)),
+    ...Array.from(sodSig).map((x) => BigInt(x)),
+    ])
   )
 }
 
@@ -115,7 +114,7 @@ export function hashSaltCountryTbs(salt: bigint, country: string, tbs: Binary): 
   result.push(salt)
   result.push(...country.split("").map((x) => BigInt(x.charCodeAt(0))))
   result.push(...Array.from(tbs.padEnd(TBS_MAX_SIZE)).map((x) => BigInt(x)))
-  return Binary.from(bb.poseidon2Hash(result.map((x) => new Fr(BigInt(x)))).toBuffer())
+  return Binary.from(hashToField(result.map((x) => BigInt(x))))
 }
 
 export function hashSaltCountrySignedAttrDg1PrivateNullifier(
@@ -133,7 +132,7 @@ export function hashSaltCountrySignedAttrDg1PrivateNullifier(
   result.push(signedAttrSize)
   result.push(...Array.from(dg1).map((x) => BigInt(x)))
   result.push(privateNullifier)
-  return Binary.from(bb.poseidon2Hash(result.map((x) => new Fr(BigInt(x)))).toBuffer())
+  return Binary.from(hashToField(result.map((x) => BigInt(x))))
 }
 
 export function hashSaltDg1PrivateNullifier(
@@ -145,7 +144,7 @@ export function hashSaltDg1PrivateNullifier(
   result.push(salt)
   result.push(...Array.from(dg1).map((x) => BigInt(x)))
   result.push(privateNullifier)
-  return Binary.from(bb.poseidon2Hash(result.map((x) => new Fr(BigInt(x)))).toBuffer())
+  return Binary.from(hashToField(result.map((x) => BigInt(x))))
 }
 
 export function getCertificateLeafHash(
@@ -164,14 +163,12 @@ export function getCertificateLeafHash(
     throw new Error("Unsupported signature algorithm")
   }
   return Binary.from(
-    bb
-      .poseidon2Hash([
-        new Fr(BigInt(registryId)),
-        new Fr(BigInt(certType)),
-        ...Array.from(cert.country).map((char: string) => new Fr(BigInt(char.charCodeAt(0)))),
-        ...Array.from(publicKey).map((x) => new Fr(BigInt(x))),
+    hashToField([
+        BigInt(registryId),
+        BigInt(certType),
+        ...Array.from(cert.country).map((char: string) => BigInt(char.charCodeAt(0))),
+        ...Array.from(publicKey).map((x) => BigInt(x)),
       ])
-      .toBuffer(),
   ).toHex()
 }
 
