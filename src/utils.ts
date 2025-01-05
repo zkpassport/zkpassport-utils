@@ -2,9 +2,15 @@ import { CompiledCircuit } from "@noir-lang/types"
 
 export async function loadModule(module: string) {
   try {
-    return await import(module)
+    if (typeof require !== 'undefined') {
+      // React Native and Node.js environment
+      return require(module);
+    } else {
+      // Web environment
+      return await import(module);
+    }
   } catch {
-    return undefined
+    return undefined;
   }
 }
 

@@ -164,7 +164,6 @@ export function loadDscKeypairFromFile(filePath: string): forge.pki.rsa.KeyPair 
   if (!fs) {
     throw new Error('File system operations are only available in Node.js environment');
   }
-  console.log(fs.readFileSync)
   const keypairData = JSON.parse(fs.readFileSync(filePath, "utf-8"))
   return {
     privateKey: forge.pki.privateKeyFromPem(keypairData.privateKey),
