@@ -1,5 +1,5 @@
-import { Binary } from "@/binary"
-import { PassportViewModel } from "@/types"
+import { Binary } from "../binary"
+import { PassportViewModel } from "../types"
 import { p256 } from "@noble/curves/p256"
 import { p384 } from "@noble/curves/p384"
 import { p521 } from "@noble/curves/p521"
@@ -7,9 +7,9 @@ import { ECParameters } from "@peculiar/asn1-ecc"
 import { RSAPublicKey } from "@peculiar/asn1-rsa"
 import { AsnParser } from "@peculiar/asn1-schema"
 import { TBSCertificate } from "@peculiar/asn1-x509"
-import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "@/passport-reader/constants"
-import { SOD } from "@/passport-reader/sod"
-import { ASN } from "@/passport-reader/asn"
+import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "./constants"
+import { SOD } from "./sod"
+import { ASN } from "./asn"
 
 export class PassportReader {
   public dg1?: Binary

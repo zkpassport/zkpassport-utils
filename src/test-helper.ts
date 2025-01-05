@@ -1,6 +1,6 @@
-import { Binary } from "@/binary"
-import { PassportReader } from "@/passport-reader/passport-reader"
-import { CSCMasterlist, PassportViewModel, Query } from "@/types"
+import { Binary } from "./binary"
+import { PassportReader } from "./passport-reader/passport-reader"
+import { CSCMasterlist, PassportViewModel, Query } from "./types"
 import { readFile } from "fs/promises"
 import path from "path"
 import {
@@ -8,7 +8,7 @@ import {
   getDSCCircuitInputs,
   getIDDataCircuitInputs,
   getIntegrityCheckCircuitInputs,
-} from "@/circuit-matcher"
+} from "./circuit-matcher"
 import { InputMap } from "@noir-lang/noir_js"
 
 type CircuitType = "dsc" | "id" | "integrity" | "disclose"

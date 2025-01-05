@@ -1,7 +1,7 @@
 import { generateKeyPairSync, createSign, createVerify } from "crypto"
 import { AsnParser } from "@peculiar/asn1-schema"
 import { RSAPublicKey } from "@peculiar/asn1-rsa"
-import { fromArrayBufferToBigInt } from "@/utils"
+import { fromArrayBufferToBigInt } from "./utils"
 
 /**
  * Generates an RSA key pair.

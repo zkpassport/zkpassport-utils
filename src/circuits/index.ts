@@ -1,18 +1,33 @@
-import { Binary } from "@/binary"
-import { BB_THREADS, CERT_TYPE_CSC, CERTIFICATE_REGISTRY_ID, TBS_MAX_SIZE } from "@/constants"
-import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "@/types"
-import { BarretenbergSync, Fr, UltraHonkBackend } from "@aztec/bb.js"
+import { Binary } from "../binary"
+import { BB_THREADS, CERT_TYPE_CSC, CERTIFICATE_REGISTRY_ID, TBS_MAX_SIZE } from "../constants"
+import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "../types"
 import { CompiledCircuit, InputMap, Noir } from "@noir-lang/noir_js"
 import { ProofData } from "@noir-lang/types"
 import { readFileSync } from "fs"
 import path from "path"
 
-const bb = await BarretenbergSync.initSingleton()
+let bb: any = null
+let Fr: any = null
+let UltraHonkBackend: any = null
+
+async function initBarretenberg() {
+  if (!bb) {
+    try {
+      const { BarretenbergSync, Fr: FrClass, UltraHonkBackend: UHBackend } = await import("@aztec/bb.js")
+      bb = await BarretenbergSync.initSingleton()
+      Fr = FrClass
+      UltraHonkBackend = UHBackend
+    } catch (error) {
+      throw new Error("@aztec/bb.js is required for circuit operations. Please install it as a dependency.")
+    }
+  }
+  return { bb, Fr, UltraHonkBackend }
+}
 
 export class Circuit {
   private manifest: CompiledCircuit
   private name: string
-  public backend?: UltraHonkBackend
+  public backend?: any
   public noir?: Noir
 
   constructor(manifest: CompiledCircuit, name: string) {
@@ -21,16 +36,11 @@ export class Circuit {
   }
 
   async init() {
-    if (!this.backend) {
-      this.backend = new UltraHonkBackend(this.manifest.bytecode, {
-        threads: BB_THREADS,
-      })
-      if (!this.backend) throw new Error("Error initializing backend")
-    }
-    if (!this.noir) {
-      this.noir = new Noir(this.manifest)
-      if (!this.noir) throw new Error("Error initializing noir")
-    }
+    const { UltraHonkBackend: UHBackend } = await initBarretenberg()
+    this.backend = new UHBackend(this.manifest.bytecode, {
+      threads: BB_THREADS,
+    })
+    this.noir = new Noir(this.manifest)
   }
 
   async solve(inputs: InputMap): Promise<Uint8Array> {

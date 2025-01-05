@@ -1,14 +1,30 @@
-import { Binary } from "@/binary"
-import { BarretenbergSync, Fr } from "@aztec/bb.js"
+import { Binary } from "./binary"
 import { LeanIMT } from "@zk-kit/lean-imt"
 
-const bb = await BarretenbergSync.initSingleton()
+let bb: any = null
+let Fr: any = null
+
+async function initBarretenberg() {
+  if (!bb) {
+    try {
+      const { BarretenbergSync, Fr: FrClass } = await import("@aztec/bb.js")
+      bb = await BarretenbergSync.initSingleton()
+      Fr = FrClass
+    } catch (error) {
+      throw new Error("@aztec/bb.js is required for Merkle tree operations. Please install it as a dependency.")
+    }
+  }
+  return { bb, Fr }
+}
 
 // NOTE: height is currently not used because we're using a _lean_ imt that doesn't yet support padding
 export async function computeMerkleProof(height: number, leaves: Binary[], index: number) {
   if (index < 0 || index >= leaves.length) throw new Error("Invalid index")
+  
+  const { bb: barretenberg, Fr: FrClass } = await initBarretenberg()
+  
   const hash = (a: bigint, b: bigint) =>
-    uint8ArrayToBigInt(bb.poseidon2Hash([new Fr(a), new Fr(b)]).value)
+    uint8ArrayToBigInt(barretenberg.poseidon2Hash([new FrClass(a), new FrClass(b)]).value)
   const tree = new LeanIMT(
     hash,
     leaves.map((leaf) => leaf.toBigInt()),
