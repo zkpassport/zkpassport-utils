@@ -1,8 +1,11 @@
+// Node.js specific code
+const util = await loadModule("util")
+
 import { Binary } from "../binary"
 import { ASN } from "./asn"
 import { AsnConvert, AsnParser, AsnSerializer } from "@peculiar/asn1-schema"
 import { decodeOID, getHashAlgorithmName, getOIDName } from "./oids"
-import { inspect } from "util"
+import { loadModule } from "@/utils"
 
 export type DigestAlgorithm = "SHA1" | "SHA224" | "SHA256" | "SHA384" | "SHA512"
 export type SignatureAlgorithm =
@@ -33,7 +36,7 @@ export class DataGroupHashValues {
     this.values = values
   }
 
-  [inspect.custom](): Map<number, Binary> {
+  [Symbol.for("nodejs.util.inspect.custom")](): Map<number, Binary> {
     return new Map(Object.entries(this.values).map(([key, value]) => [Number(key), value]))
   }
 }
@@ -412,9 +415,10 @@ export class SOD implements SODSignedData {
     })
   }
 
-  [inspect.custom](): string {
+  [Symbol.for("nodejs.util.inspect.custom")](): string {
     let sod: SODSignedData = new SOD(this)
-    return inspect(
+    if (!util) return "util is not available"
+    return util.inspect(
       {
         version: sod.version,
         digestAlgorithms: sod.digestAlgorithms,

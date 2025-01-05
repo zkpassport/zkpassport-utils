@@ -1,18 +1,14 @@
-// Node.js specific imports
-const readFileSync = typeof process !== 'undefined'
-  ? (await import('fs')).readFileSync
-  : undefined;
-
-const path = typeof process !== 'undefined'
-  ? (await import('path')).default
-  : undefined;
-
 import { Binary } from "../binary"
 import { BB_THREADS, CERT_TYPE_CSC, CERTIFICATE_REGISTRY_ID, TBS_MAX_SIZE } from "../constants"
 import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "../types"
 import { CompiledCircuit, InputMap, Noir } from "@noir-lang/noir_js"
 import { ProofData } from "@noir-lang/types"
 import { hashToField } from "@zkpassport/poseidon2/bn254"
+import { loadModule } from "@/utils"
+
+// Node.js specific imports
+const fs = await loadModule("fs")
+const path = await loadModule("path")
 
 let bb: any = null
 let Fr: any = null
@@ -92,8 +88,8 @@ export class Circuit {
     const isFullPath = path.isAbsolute(fileName) || fileName.includes("/")
     const circuitPath = isFullPath ? fileName : path.resolve(`target/${fileName}.json`)
     try {
-      if (!readFileSync) throw new Error("Read file sync is not available in this environment")
-      const manifest = JSON.parse(readFileSync(circuitPath, "utf-8"))
+      if (!fs) throw new Error("Read file sync is not available in this environment")
+      const manifest = JSON.parse(fs.readFileSync(circuitPath, "utf-8"))
       const name = path.basename(fileName, ".json")
       return new Circuit(manifest, name)
     } catch (error) {

@@ -1,11 +1,6 @@
 // Node.js specific imports
-const readFile = typeof process !== 'undefined'
-  ? (await import('fs/promises')).readFile
-  : undefined;
-
-const path = typeof process !== 'undefined'
-  ? (await import('path')).default
-  : undefined;
+const fs = await loadModule('fs/promises')
+const path = await loadModule('path')
 
 import { Binary } from "./binary"
 import { PassportReader } from "./passport-reader/passport-reader"
@@ -17,6 +12,7 @@ import {
   getIntegrityCheckCircuitInputs,
 } from "./circuit-matcher"
 import { InputMap } from "@noir-lang/noir_js"
+import { loadModule } from "./utils";
 
 type CircuitType = "dsc" | "id" | "integrity" | "disclose"
 
@@ -78,11 +74,11 @@ export class TestHelper {
 
   public async loadPassportDataFromFile(dg1FileName: string, sodFileName: string): Promise<void> {
     const FIXTURES_PATH = "src/ts/tests/fixtures"
-    if (!readFile || !path) {
+    if (!fs || !path) {
       throw new Error('File system operations are only available in Node.js environment');
     }
-    const dg1 = Binary.from(await readFile(path.resolve(FIXTURES_PATH, dg1FileName)))
-    const sod = Binary.from(await readFile(path.resolve(FIXTURES_PATH, sodFileName)))
+    const dg1 = Binary.from(await fs.readFile(path.resolve(FIXTURES_PATH, dg1FileName)))
+    const sod = Binary.from(await fs.readFile(path.resolve(FIXTURES_PATH, sodFileName)))
     this.passportReader.loadPassport(dg1, sod)
     this.passport = this.passportReader.getPassportViewModel()
   }

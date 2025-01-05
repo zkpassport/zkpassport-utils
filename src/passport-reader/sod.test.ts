@@ -1,12 +1,11 @@
 // Node.js specific imports
-const readFile = typeof process !== 'undefined'
-  ? (await import('fs/promises')).readFile
-  : undefined;
+const fs = await loadModule("fs/promises")
+const path = await loadModule("path")
 
 import { Binary } from "../binary"
 import { beforeAll, describe, expect, it } from "bun:test"
 import { SOD } from "./sod"
-import path from "path"
+import { loadModule } from "@/utils"
 
 const FIXTURES_PATH = "src/tests/fixtures"
 
@@ -16,10 +15,10 @@ describe("SOD", () => {
 
   beforeAll(async () => {
     const sodFile = path.resolve(FIXTURES_PATH, "EF_SOD.bin")
-    if (!readFile) {
+    if (!fs) {
       throw new Error('File system operations are only available in Node.js environment');
     }
-    sodBytes = Binary.from(await readFile(sodFile))
+    sodBytes = Binary.from(await fs.readFile(sodFile))
     sod = SOD.fromDER(sodBytes)
   })
 

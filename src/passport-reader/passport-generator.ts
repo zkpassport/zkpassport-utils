@@ -1,8 +1,3 @@
-// Node.js specific imports
-const fs = typeof process !== 'undefined'
-  ? await import('fs')
-  : undefined;
-
 import { Binary } from "../binary"
 import { SignedData, SignerInfo, SignerInfos } from "@peculiar/asn1-cms"
 import { AsnConvert, AsnSerializer, OctetString } from "@peculiar/asn1-schema"
@@ -10,6 +5,10 @@ import { Certificate } from "@peculiar/asn1-x509"
 import forge from "node-forge"
 import { ASN } from "./asn"
 import { wrapSodInContentInfo } from "./sod-generator"
+import { loadModule } from "@/utils"
+
+// Node.js specific imports
+const fs = await loadModule("fs")
 
 export function generateSigningCertificates(
   {
@@ -165,6 +164,7 @@ export function loadDscKeypairFromFile(filePath: string): forge.pki.rsa.KeyPair 
   if (!fs) {
     throw new Error('File system operations are only available in Node.js environment');
   }
+  console.log(fs.readFileSync)
   const keypairData = JSON.parse(fs.readFileSync(filePath, "utf-8"))
   return {
     privateKey: forge.pki.privateKeyFromPem(keypairData.privateKey),

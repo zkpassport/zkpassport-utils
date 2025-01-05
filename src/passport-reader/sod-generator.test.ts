@@ -5,12 +5,10 @@ import { describe, it, expect } from "bun:test"
 import { ASN, id_sha256 } from "@/passport-reader/asn"
 import { generateSampleDSC, generateSod } from "@/passport-reader/sod-generator"
 import { Binary } from "@/binary"
+import { loadModule } from "@/utils"
 
-let nodeCrypto: any
-// Check if we're in Node.js environment
-if (typeof process !== "undefined" && process.versions && process.versions.node) {
-  nodeCrypto = require("crypto")
-}
+const nodeCrypto = await loadModule("crypto")
+
 
 async function getHash(data: Buffer): Promise<Buffer> {
   // Node.js environment

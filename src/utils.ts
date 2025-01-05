@@ -1,15 +1,16 @@
-const readFile = typeof process !== 'undefined' 
-  ? (await import('fs/promises')).readFile 
-  : undefined;
-
 import { CompiledCircuit } from "@noir-lang/types"
 
-let noirWasm: { createFileManager: any; compile_program: any } | undefined;
-try {
-  noirWasm = await import("@noir-lang/noir_wasm");
-} catch {
-  // noir_wasm is not available
+export async function loadModule(module: string) {
+  try {
+    return await import(module)
+  } catch {
+    return undefined
+  }
 }
+
+let fs = await loadModule('fs/promises')
+
+let noirWasm: { createFileManager: any; compile_program: any } | undefined = await loadModule("@noir-lang/noir_wasm")
 
 import { AsnSerializer } from "@peculiar/asn1-schema"
 
@@ -117,10 +118,10 @@ export function strip0x(input: string): string {
  */
 export async function loadCircuitManifest(filename: string): Promise<CompiledCircuit> {
   try {
-    if (!readFile) {
+    if (!fs) {
       throw new Error('File system operations are only available in Node.js environment');
     }
-    return JSON.parse(await readFile(filename, "utf-8"))
+    return JSON.parse(await fs.readFile(filename, "utf-8"))
   } catch (error) {
     throw new Error(`${filename} is not valid JSON`)
   }
