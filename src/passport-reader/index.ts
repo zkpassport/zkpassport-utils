@@ -1,4 +1,4 @@
-export { PassportReader } from "./passport-reader"
+export * from "./passport-reader"
 export { SOD } from "./sod"
 export * from "./oids"
 export * from "./constants"

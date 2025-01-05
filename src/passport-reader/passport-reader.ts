@@ -10,6 +10,7 @@ import { TBSCertificate } from "@peculiar/asn1-x509"
 import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "./constants"
 import { SOD } from "./sod"
 import { ASN } from "./asn"
+import { decodeOID } from "./oids"
 
 export class PassportReader {
   public dg1?: Binary
@@ -76,35 +77,13 @@ export class PassportReader {
   }
 }
 
-function getSODContent(passport: PassportViewModel): ASN.SignedData {
+export function getSODContent(passport: PassportViewModel): ASN.SignedData {
   const cert = AsnParser.parse(passport.sod.bytes.toBuffer(), ASN.ContentInfo)
   const signedData = AsnParser.parse(cert.content, ASN.SignedData)
   return signedData
 }
 
-function decodeOID(bytes: number[]): string {
-  // First byte represents first two numbers: first = byte / 40, second = byte % 40
-  const firstNumber = Math.floor(bytes[2] / 40)
-  const secondNumber = bytes[2] % 40
-  const values = [firstNumber, secondNumber]
-  let value = 0
-  // Process remaining bytes
-  for (let i = 3; i < bytes.length; i++) {
-    // For each byte, check if highest bit is 1
-    if (bytes[i] & 0x80) {
-      // If highest bit is 1, we continue reading next byte
-      value = (value << 7) + (bytes[i] & 0x7f)
-    } else {
-      // If highest bit is 0, this is the last byte of this number
-      value = (value << 7) + bytes[i]
-      values.push(value)
-      value = 0
-    }
-  }
-  return values.join(".")
-}
-
-function getEContentHashAlgorithm(passport: PassportViewModel): string {
+export function getEContentHashAlgorithm(passport: PassportViewModel): string {
   const eContent = getEContent(passport)
   const oidOffset = 9
   const oidLength = eContent[oidOffset + 1]
@@ -112,19 +91,19 @@ function getEContentHashAlgorithm(passport: PassportViewModel): string {
   return HASH_OIDS[decodeOID(oidBytes) as keyof typeof HASH_OIDS] ?? ""
 }
 
-function getEContent(passport: PassportViewModel): number[] {
+export function getEContent(passport: PassportViewModel): number[] {
   const signedData = getSODContent(passport)
   return Array.from(
     new Uint8Array(signedData.encapContentInfo.eContent?.single?.buffer ?? new ArrayBuffer(0)),
   )
 }
 
-function getSignedAttributesHashingAlgorithm(passport: PassportViewModel): string {
+export function getSignedAttributesHashingAlgorithm(passport: PassportViewModel): string {
   const signedData = getSODContent(passport)
   return HASH_OIDS[signedData.digestAlgorithms[0].algorithm as keyof typeof HASH_OIDS] ?? ""
 }
 
-function getSODCMSVersion(passport: PassportViewModel): string {
+export function getSODCMSVersion(passport: PassportViewModel): string {
   const signedData = getSODContent(passport)
   return signedData.version.toString()
 }
@@ -145,7 +124,7 @@ function fromArrayBufferToBigInt(buffer: ArrayBuffer): bigint {
   return BigInt("0x" + Buffer.from(buffer).toString("hex"))
 }
 
-function getCurveName(ecParams: ECParameters): string {
+export function getCurveName(ecParams: ECParameters): string {
   if (ecParams.namedCurve) {
     return CURVE_OIDS[ecParams.namedCurve as keyof typeof CURVE_OIDS] ?? ""
   }
@@ -211,7 +190,7 @@ export function getRSAInfo(tbsCertificate: TBSCertificate): {
   }
 }
 
-function getSignatureAlgorithmType(signatureAlgorithm: string): "RSA" | "ECDSA" | "" {
+export function getSignatureAlgorithmType(signatureAlgorithm: string): "RSA" | "ECDSA" | "" {
   if (signatureAlgorithm.toLowerCase().includes("rsa")) {
     return "RSA"
   } else if (signatureAlgorithm.toLowerCase().includes("ecdsa")) {
