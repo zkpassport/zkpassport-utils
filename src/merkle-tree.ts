@@ -1,4 +1,4 @@
-import { hashToField } from "@zkpassport/poseidon2/dist/bn254"
+import { hashToField } from "@zkpassport/poseidon2/bn254"
 import { Binary } from "./binary"
 import { LeanIMT } from "@zk-kit/lean-imt"
 

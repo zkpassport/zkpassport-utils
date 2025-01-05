@@ -2,10 +2,6 @@ import { Binary } from "../binary"
 import { ASN } from "./asn"
 import { AsnConvert, AsnParser, AsnSerializer } from "@peculiar/asn1-schema"
 import { decodeOID, getHashAlgorithmName, getOIDName } from "./oids"
-import { loadModule } from "@/utils"
-
-// Node.js specific code
-const util = await loadModule("util")
 
 export type DigestAlgorithm = "SHA1" | "SHA224" | "SHA256" | "SHA384" | "SHA512"
 export type SignatureAlgorithm =
@@ -415,7 +411,7 @@ export class SOD implements SODSignedData {
     })
   }
 
-  [Symbol.for("nodejs.util.inspect.custom")](): string {
+  /*[Symbol.for("nodejs.util.inspect.custom")](): string {
     let sod: SODSignedData = new SOD(this)
     if (!util) return "util is not available"
     return util.inspect(
@@ -446,5 +442,5 @@ export class SOD implements SODSignedData {
       },
       { depth: null, colors: true },
     )
-  }
+  }*/
 }

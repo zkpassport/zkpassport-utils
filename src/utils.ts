@@ -1,5 +1,3 @@
-import { AsnSerializer } from "@peculiar/asn1-schema"
-
 export async function loadModule(module: string) {
   try {
     return require(module);
@@ -151,8 +149,4 @@ export function assert(truthy: boolean, errorMsg: string): void {
   if (!truthy) {
     throw new Error(errorMsg)
   }
-}
-
-export function serializeAsn(obj: any): ArrayBuffer {
-  return AsnSerializer.serialize(obj)
 }

@@ -1,6 +1,6 @@
 import { TBS_MAX_SIZE, CERTIFICATE_REGISTRY_ID, CERT_TYPE_CSC } from "../constants"
 import { Binary } from "../binary"
-import { hashToField } from "@zkpassport/poseidon2/dist/bn254"
+import { hashToField } from "@zkpassport/poseidon2/bn254"
 import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "../types"
 
 export function calculatePrivateNullifier(dg1: Binary, sodSig: Binary): Binary {
