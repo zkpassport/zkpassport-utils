@@ -1,10 +1,17 @@
+// Node.js specific imports
+const readFileSync = typeof process !== 'undefined'
+  ? (await import('fs')).readFileSync
+  : undefined;
+
+const path = typeof process !== 'undefined'
+  ? (await import('path')).default
+  : undefined;
+
 import { Binary } from "../binary"
 import { BB_THREADS, CERT_TYPE_CSC, CERTIFICATE_REGISTRY_ID, TBS_MAX_SIZE } from "../constants"
 import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "../types"
 import { CompiledCircuit, InputMap, Noir } from "@noir-lang/noir_js"
 import { ProofData } from "@noir-lang/types"
-import { readFileSync } from "fs"
-import path from "path"
 import { hashToField } from "@zkpassport/poseidon2/bn254"
 
 let bb: any = null
@@ -81,9 +88,11 @@ export class Circuit {
   }
 
   static from(fileName: string): Circuit {
+    if (!path) throw new Error("Path is not available in this environment") 
     const isFullPath = path.isAbsolute(fileName) || fileName.includes("/")
     const circuitPath = isFullPath ? fileName : path.resolve(`target/${fileName}.json`)
     try {
+      if (!readFileSync) throw new Error("Read file sync is not available in this environment")
       const manifest = JSON.parse(readFileSync(circuitPath, "utf-8"))
       const name = path.basename(fileName, ".json")
       return new Circuit(manifest, name)

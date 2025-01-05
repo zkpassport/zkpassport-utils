@@ -1,8 +1,12 @@
+// Node.js specific imports
+const fs = typeof process !== 'undefined'
+  ? await import('fs')
+  : undefined;
+
 import { Binary } from "../binary"
 import { SignedData, SignerInfo, SignerInfos } from "@peculiar/asn1-cms"
 import { AsnConvert, AsnSerializer, OctetString } from "@peculiar/asn1-schema"
 import { Certificate } from "@peculiar/asn1-x509"
-import * as fs from "fs"
 import forge from "node-forge"
 import { ASN } from "./asn"
 import { wrapSodInContentInfo } from "./sod-generator"
@@ -125,15 +129,24 @@ export function signSodWithRsaKey(sod: SignedData, rsaKey: forge.pki.rsa.KeyPair
 
 export function saveSodToFile(sod: SignedData, filePath: string) {
   const encoded = AsnSerializer.serialize(wrapSodInContentInfo(sod))
+  if (!fs) {
+    throw new Error('File system operations are only available in Node.js environment');
+  }
   fs.writeFileSync(filePath, Buffer.from(encoded))
 }
 
 export function saveCertificateToFile(certificate: Certificate, filePath: string) {
   const encoded = AsnSerializer.serialize(certificate)
+  if (!fs) {
+    throw new Error('File system operations are only available in Node.js environment');
+  }
   fs.writeFileSync(filePath, Buffer.from(encoded))
 }
 
 export function saveDG1ToFile(dg1: Binary, filePath: string) {
+  if (!fs) {
+    throw new Error('File system operations are only available in Node.js environment');
+  }
   fs.writeFileSync(filePath, dg1.toBuffer())
 }
 
@@ -142,10 +155,16 @@ export function saveDscKeypairToFile(keypair: forge.pki.rsa.KeyPair, filePath: s
     privateKey: forge.pki.privateKeyToPem(keypair.privateKey),
     publicKey: forge.pki.publicKeyToPem(keypair.publicKey),
   }
+  if (!fs) {
+    throw new Error('File system operations are only available in Node.js environment');
+  }
   fs.writeFileSync(filePath, JSON.stringify(keypairData, null, 2))
 }
 
 export function loadDscKeypairFromFile(filePath: string): forge.pki.rsa.KeyPair {
+  if (!fs) {
+    throw new Error('File system operations are only available in Node.js environment');
+  }
   const keypairData = JSON.parse(fs.readFileSync(filePath, "utf-8"))
   return {
     privateKey: forge.pki.privateKeyFromPem(keypairData.privateKey),

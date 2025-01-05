@@ -1,5 +1,3 @@
-import { inspect } from "util"
-
 declare global {
   interface BigIntConstructor {
     (value: Binary): bigint
@@ -142,7 +140,7 @@ export class Binary {
     return this.toHex()
   }
 
-  [inspect.custom](): string {
+  [Symbol.for("nodejs.util.inspect.custom")](): string {
     return `Binary(${this.toHex()})`
   }
 
