@@ -1,4 +1,22 @@
-import { generateKeyPairSync, createSign, createVerify } from "crypto"
+// Type declaration for the crypto module
+declare let crypto: {
+  generateKeyPairSync: typeof import('crypto')['generateKeyPairSync']
+  createSign: typeof import('crypto')['createSign']
+  createVerify: typeof import('crypto')['createVerify']
+} | undefined;
+
+// Conditionally import crypto in Node.js environment
+if (typeof window === 'undefined') {
+  try {
+    const nodeCrypto = require('crypto');
+    crypto = nodeCrypto;
+  } catch {
+    crypto = undefined;
+  }
+} else {
+  crypto = undefined;
+}
+
 import { AsnParser } from "@peculiar/asn1-schema"
 import { RSAPublicKey } from "@peculiar/asn1-rsa"
 import { fromArrayBufferToBigInt } from "./utils"
@@ -7,9 +25,13 @@ import { fromArrayBufferToBigInt } from "./utils"
  * Generates an RSA key pair.
  * @param keySize - The size of the key in bits (default is 2048).
  * @returns An object containing the private and public keys.
+ * @throws Error if crypto is not available
  */
 export function generateRSAKeyPair(keySize: number = 2048) {
-  const { privateKey, publicKey } = generateKeyPairSync("rsa", {
+  if (!crypto) {
+    throw new Error('Crypto functionality is not available in this environment');
+  }
+  const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
     modulusLength: keySize, // Key size in bits
     privateKeyEncoding: {
       type: "pkcs8",
@@ -40,13 +62,17 @@ export function getRSAPublicKeyParams(publicKey: Buffer): {
  * @param data - The data to be signed.
  * @param hashAlgorithm - The hashing algorithm to use (default is 'SHA256').
  * @returns The binary signature as a Buffer.
+ * @throws Error if crypto is not available
  */
 export function signData(
   privateKey: string | Buffer,
   data: string | Buffer,
   hashAlgorithm: string = "RSA-SHA256",
 ): Buffer {
-  const sign = createSign(hashAlgorithm)
+  if (!crypto) {
+    throw new Error('Crypto functionality is not available in this environment');
+  }
+  const sign = crypto.createSign(hashAlgorithm)
   sign.update(data)
   const signature = sign.sign(privateKey)
   return signature
@@ -59,6 +85,7 @@ export function signData(
  * @param signature - The signature to verify.
  * @param hashAlgorithm - The hashing algorithm to use (default is 'SHA256').
  * @returns true if the signature is valid, false otherwise.
+ * @throws Error if crypto is not available
  */
 export function verifySignature(
   publicKey: string,
@@ -66,7 +93,10 @@ export function verifySignature(
   signature: Buffer,
   hashAlgorithm: string = "SHA256",
 ): boolean {
-  const verify = createVerify(hashAlgorithm)
+  if (!crypto) {
+    throw new Error('Crypto functionality is not available in this environment');
+  }
+  const verify = crypto.createVerify(hashAlgorithm)
   verify.update(data)
   verify.end()
   return verify.verify(publicKey, signature)

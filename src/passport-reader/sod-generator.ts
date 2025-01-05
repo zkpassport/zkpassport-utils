@@ -1,4 +1,3 @@
-import { createHash } from "crypto"
 import { ASN, id_ldsSecurityObject } from "./asn"
 import { Binary } from "../binary"
 import {
@@ -42,6 +41,28 @@ import {
   Validity,
   Version,
 } from "@peculiar/asn1-x509"
+
+let nodeCrypto: any
+// Check if we're in Node.js environment
+if (typeof process !== "undefined" && process.versions && process.versions.node) {
+  nodeCrypto = require("crypto")
+}
+
+async function getHash(data: Buffer): Promise<Buffer> {
+  // Node.js environment
+  if (nodeCrypto) {
+    return nodeCrypto.createHash("sha256").update(data).digest()
+  }
+  
+  // React Native or Browser environment (both have global crypto)
+  if (typeof crypto !== "undefined" && crypto.subtle) {
+    const arrayBuffer = new TextEncoder().encode(data.toString())
+    const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer)
+    return Buffer.from(hashBuffer)
+  }
+  
+  throw new Error("No crypto implementation available")
+}
 
 export function generateSampleDSC(): Certificate {
   // Create subject and issuer names
@@ -112,7 +133,7 @@ export function generateSampleDSC(): Certificate {
   return certificate
 }
 
-export function generateSod(dg1: Binary, certificates: Certificate[] = []) {
+export async function generateSod(dg1: Binary, certificates: Certificate[] = []) {
   // Digest Algorithms
   const digestAlgorithms = new DigestAlgorithmIdentifiers([
     new DigestAlgorithmIdentifier({
@@ -121,12 +142,10 @@ export function generateSod(dg1: Binary, certificates: Certificate[] = []) {
   ])
 
   // Encapsulated Content Info
-  const dg1Hash = createHash("sha256").update(dg1.toBuffer()).digest()
+  const dg1Hash = await getHash(dg1.toBuffer())
   const encapContentInfo = generateEncapContentInfo(dg1Hash)
   const eContentHash = Binary.from(
-    createHash("sha256")
-      .update(Binary.from(encapContentInfo!.eContent!.single!.buffer).toBuffer())
-      .digest(),
+    await getHash(Binary.from(encapContentInfo!.eContent!.single!.buffer).toBuffer())
   )
 
   // Signed Attributes

@@ -5,14 +5,36 @@ import { describe, it, expect } from "bun:test"
 import { ASN, id_sha256 } from "@/passport-reader/asn"
 import { generateSampleDSC, generateSod } from "@/passport-reader/sod-generator"
 import { Binary } from "@/binary"
-import { createHash } from "crypto"
+
+let nodeCrypto: any
+// Check if we're in Node.js environment
+if (typeof process !== "undefined" && process.versions && process.versions.node) {
+  nodeCrypto = require("crypto")
+}
+
+async function getHash(data: Buffer): Promise<Buffer> {
+  // Node.js environment
+  if (nodeCrypto) {
+    return nodeCrypto.createHash("sha256").update(data).digest()
+  }
+  
+  // React Native or Browser environment (both have global crypto)
+  if (typeof crypto !== "undefined" && crypto.subtle) {
+    const arrayBuffer = new TextEncoder().encode(data.toString())
+    const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer)
+    return Buffer.from(hashBuffer)
+  }
+  
+  throw new Error("No crypto implementation available")
+}
 
 describe("SOD", () => {
   const dg1 = Binary.from(new Uint8Array(32).buffer)
-  const dg1Hash = createHash("sha256").update(dg1.toBuffer()).digest()
+  let dg1Hash: Buffer
 
-  it("generate SOD", () => {
-    const { contentInfo } = generateSod(dg1)
+  it("generate SOD", async () => {
+    dg1Hash = await getHash(dg1.toBuffer())
+    const { contentInfo } = await generateSod(dg1)
     expect(contentInfo.contentType).toBe(id_signedData)
     // Verify the structure can be parsed back
     const sod = AsnConvert.parse(contentInfo.content, SignedData)
@@ -37,9 +59,9 @@ describe("SOD", () => {
     expect(sod.certificates?.length).toBe(0) // Default empty certificates
   })
 
-  it("generate SOD with sample DSC", () => {
+  it("generate SOD with sample DSC", async () => {
     const sampleDSC = generateSampleDSC()
-    const { contentInfo } = generateSod(dg1, [sampleDSC])
+    const { contentInfo } = await generateSod(dg1, [sampleDSC])
     // Verify the structure can be parsed back
     const sod = AsnConvert.parse(contentInfo.content, SignedData)
     // Verify certificates

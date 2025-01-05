@@ -3,7 +3,14 @@ const readFile = typeof process !== 'undefined'
   : undefined;
 
 import { CompiledCircuit } from "@noir-lang/types"
-import { createFileManager, compile_program } from "@noir-lang/noir_wasm"
+
+let noirWasm: { createFileManager: any; compile_program: any } | undefined;
+try {
+  noirWasm = await import("@noir-lang/noir_wasm");
+} catch {
+  // noir_wasm is not available
+}
+
 import { AsnSerializer } from "@peculiar/asn1-schema"
 
 /**
@@ -125,8 +132,11 @@ export async function loadCircuitManifest(filename: string): Promise<CompiledCir
  * @returns The compiled circuit.
  */
 export async function compileCircuit(path: string): Promise<CompiledCircuit> {
-  const fm = createFileManager(path)
-  const myCompiledCode = await compile_program(fm)
+  if (!noirWasm) {
+    throw new Error('@noir-lang/noir_wasm is not available. Please install it as a dependency to use circuit compilation features.');
+  }
+  const fm = noirWasm.createFileManager(path)
+  const myCompiledCode = await noirWasm.compile_program(fm)
   return myCompiledCode.program
 }
 
