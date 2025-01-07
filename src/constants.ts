@@ -1,4 +1,3 @@
-export const TBS_MAX_SIZE = 1500
 export const SIGNED_ATTR_INPUT_SIZE = 200
 export const DG1_INPUT_SIZE = 95
 export const E_CONTENT_INPUT_SIZE = 700

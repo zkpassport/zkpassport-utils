@@ -87,6 +87,19 @@ export function getCSCMasterlist(): CSCMasterlist {
   return cscMasterlistFile as CSCMasterlist
 }
 
+export function getTBSMaxLen(passport: PassportViewModel): number {
+  const tbs_len = passport.sod.certificate.tbs.bytes.length
+  if (tbs_len <= 700) {
+    return 700
+  } else if (tbs_len <= 1000) {
+    return 1000
+  } else if (tbs_len <= 1200) {
+    return 1200
+  } else {
+    return 1500
+  }
+}
+
 export function getCSCForPassport(
   passport: PassportViewModel,
   masterlist?: CSCMasterlist,
@@ -197,7 +210,8 @@ function getIDDataInputs(passport: PassportViewModel): IDDataInputs {
 
 export async function getDSCCircuitInputs(
   passport: PassportViewModel,
-  maxTbsLength: number,
+  salt: bigint,
+  merkleTreeLeaves?: Binary[],
   masterlist?: CSCMasterlist,
 ): Promise<any> {
   // Get the CSC for this passport's DSC
@@ -206,7 +220,7 @@ export async function getDSCCircuitInputs(
 
   // Generate the certificate registry merkle proof
   const cscMasterlist = masterlist ?? getCSCMasterlist()
-  const leaves = cscMasterlist.certificates.map((l) => Binary.fromHex(getCertificateLeafHash(l)))
+  const leaves = merkleTreeLeaves ?? cscMasterlist.certificates.map((l) => Binary.fromHex(getCertificateLeafHash(l)))
   const index = cscMasterlist.certificates.findIndex((l) => l === csc)
   // Fill up empty leaves with 0x01 (up to CERTIFICATE_PAD_EMPTY_LEAVES)
   const emptyLeavesNeeded = CERTIFICATE_PAD_EMPTY_LEAVES - leaves.length
@@ -223,9 +237,11 @@ export async function getDSCCircuitInputs(
     certificate_registry_id: CERTIFICATE_REGISTRY_ID,
     certificate_type: 1,
     country: csc.country,
+    salt: salt.toString(),
   }
 
   const signatureAlgorithm = getDSCSignatureAlgorithmType(passport)
+  const maxTbsLength = getTBSMaxLen(passport)
   if (signatureAlgorithm === "ECDSA") {
     const cscPublicKey = csc?.public_key as ECDSACSCPublicKey
     const publicKeyXBytes = Buffer.from(cscPublicKey.public_key_x ?? "", "hex")
@@ -253,25 +269,25 @@ export async function getDSCCircuitInputs(
   }
 }
 
-export function getIDDataCircuitInputs(passport: PassportViewModel, maxTbsLength: number): any {
+export function getIDDataCircuitInputs(passport: PassportViewModel, salt: bigint): any {
   const idData = getIDDataInputs(passport)
+  const maxTbsLength = getTBSMaxLen(passport)
   const dscData = getDSCDataInputs(passport, maxTbsLength)
   if (!dscData || !idData) return null
 
   const commIn = hashSaltCountryTbs(
-    0n,
+    salt,
     passport.nationality, // TODO: Use country from CSC/DSC here
     Binary.from(passport.tbsCertificate),
+    maxTbsLength,
   )
 
   const inputs = {
     dg1: idData.dg1,
     signed_attributes: idData.signed_attributes,
     signed_attributes_size: idData.signed_attributes_size,
-    e_content: idData.e_content,
-    e_content_size: idData.e_content_size,
-    dg1_offset_in_e_content: idData.dg1_offset_in_e_content,
     comm_in: commIn.toHex(),
+    salt: salt.toString(),
   }
 
   const signatureAlgorithm = getSodSignatureAlgorithmType(passport)
@@ -303,8 +319,9 @@ export function getIDDataCircuitInputs(passport: PassportViewModel, maxTbsLength
 
 export function getIntegrityCheckCircuitInputs(
   passport: PassportViewModel,
-  maxTbsLength: number,
+  salt: bigint,
 ): any {
+  const maxTbsLength = getTBSMaxLen(passport)
   const dscData = getDSCDataInputs(passport, maxTbsLength)
   if (!dscData) return null
   const idData = getIDDataInputs(passport)
@@ -315,7 +332,7 @@ export function getIntegrityCheckCircuitInputs(
     Binary.from(passport.sodSignature),
   )
   const comm_in = hashSaltCountrySignedAttrDg1PrivateNullifier(
-    0n,
+    salt,
     passport.nationality, // TODO: Use country from CSC/DSC here
     Binary.from(passport.signedAttributes).padEnd(SIGNED_ATTR_INPUT_SIZE),
     BigInt(passport.signedAttributes.length),
@@ -333,6 +350,7 @@ export function getIntegrityCheckCircuitInputs(
     dg1_offset_in_e_content: idData.dg1_offset_in_e_content,
     comm_in: comm_in,
     private_nullifier: privateNullifier.toHex(),
+    salt: salt.toString(),
   }
 }
 
@@ -389,7 +407,13 @@ function getGenderRange(passport: PassportViewModel): [number, number] {
   return [isIDCard ? 37 : 64, isIDCard ? 38 : 65]
 }
 
-export function getDiscloseCircuitInputs(passport: PassportViewModel, query: Query): any {
+export function getDiscloseCircuitInputs(
+  passport: PassportViewModel,
+  query: Query,
+  salt: bigint,
+  service_scope: bigint = 0n,
+  service_subscope: bigint = 0n,
+): any {
   const idData = getIDDataInputs(passport)
   if (!idData) return null
   const privateNullifier = calculatePrivateNullifier(
@@ -397,7 +421,7 @@ export function getDiscloseCircuitInputs(passport: PassportViewModel, query: Que
     Binary.from(passport.sodSignature),
   )
   const commIn = hashSaltDg1PrivateNullifier(
-    0n,
+    salt,
     Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
     privateNullifier.toBigInt(),
   )
@@ -458,12 +482,19 @@ export function getDiscloseCircuitInputs(passport: PassportViewModel, query: Que
     disclose_mask: discloseMask,
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    service_scope: 0,
-    service_subscope: 0,
+    service_scope: service_scope.toString(),
+    service_subscope: service_subscope.toString(),
+    salt: salt.toString(),
   }
 }
 
-export function getDiscloseFlagsCircuitInputs(passport: PassportViewModel, query: Query): any {
+export function getDiscloseFlagsCircuitInputs(
+  passport: PassportViewModel,
+  query: Query,
+  salt: bigint,
+  service_scope: bigint = 0n,
+  service_subscope: bigint = 0n,
+): any {
   const idData = getIDDataInputs(passport)
   if (!idData) return null
   const privateNullifier = calculatePrivateNullifier(
@@ -492,7 +523,8 @@ export function getDiscloseFlagsCircuitInputs(passport: PassportViewModel, query
     disclose_flags: discloseFlags,
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    service_scope: 0,
-    service_subscope: 0,
+    service_scope: service_scope.toString(),
+    service_subscope: service_subscope.toString(),
+    salt: salt.toString(),
   }
 }

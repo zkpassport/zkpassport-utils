@@ -1,4 +1,4 @@
-import { TBS_MAX_SIZE, CERTIFICATE_REGISTRY_ID, CERT_TYPE_CSC } from "../constants"
+import { CERTIFICATE_REGISTRY_ID, CERT_TYPE_CSC } from "../constants"
 import { Binary } from "../binary"
 import { hashToField } from "@zkpassport/poseidon2/bn254"
 import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "../types"
@@ -12,11 +12,11 @@ export function calculatePrivateNullifier(dg1: Binary, sodSig: Binary): Binary {
     )
   }
   
-  export function hashSaltCountryTbs(salt: bigint, country: string, tbs: Binary): Binary {
+  export function hashSaltCountryTbs(salt: bigint, country: string, tbs: Binary, maxTbsLength: number): Binary {
     const result: bigint[] = []
     result.push(salt)
     result.push(...country.split("").map((x) => BigInt(x.charCodeAt(0))))
-    result.push(...Array.from(tbs.padEnd(TBS_MAX_SIZE)).map((x) => BigInt(x)))
+    result.push(...Array.from(tbs.padEnd(maxTbsLength)).map((x) => BigInt(x)))
     return Binary.from(hashToField(result.map((x) => BigInt(x))))
   }
   
