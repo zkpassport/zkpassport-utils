@@ -348,7 +348,7 @@ export function getIntegrityCheckCircuitInputs(
     e_content: idData.e_content,
     e_content_size: idData.e_content_size,
     dg1_offset_in_e_content: idData.dg1_offset_in_e_content,
-    comm_in: comm_in,
+    comm_in: comm_in.toHex(),
     private_nullifier: privateNullifier.toHex(),
     salt: salt.toString(),
   }
