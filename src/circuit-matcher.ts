@@ -28,6 +28,7 @@ import { Binary } from "./binary"
 import {
   calculatePrivateNullifier,
   getCertificateLeafHash,
+  getCountryWeightedSum,
   hashSaltCountrySignedAttrDg1PrivateNullifier,
   hashSaltCountryTbs,
   hashSaltDg1PrivateNullifier,
@@ -47,6 +48,8 @@ import {
   padArrayWithZeros,
   fromArrayBufferToBigInt,
 } from "./utils"
+import { parseDate } from "./circuits/disclose"
+import { Alpha3Code } from "i18n-iso-countries"
 
 export function isSignatureAlgorithmSupported(
   passport: PassportViewModel,
@@ -521,6 +524,154 @@ export function getDiscloseFlagsCircuitInputs(
   return {
     dg1: idData.dg1,
     disclose_flags: discloseFlags,
+    comm_in: commIn.toHex(),
+    private_nullifier: privateNullifier.toHex(),
+    service_scope: service_scope.toString(),
+    service_subscope: service_subscope.toString(),
+    salt: salt.toString(),
+  }
+}
+
+export function calculateAge(passport: PassportViewModel): number {
+  const birthdate = passport.dateOfBirth
+  if (!birthdate) return 0
+  const birthdateDate = parseDate(new TextEncoder().encode(birthdate))
+  const currentDate = new Date()
+
+  let age = currentDate.getFullYear() - birthdateDate.getFullYear()
+  const monthDiff = currentDate.getMonth() - birthdateDate.getMonth()
+  if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < birthdateDate.getDate())) {
+    age--
+  }
+  return age
+}
+
+export function getAgeCircuitInputs(
+  passport: PassportViewModel,
+  query: Query,
+  salt: bigint,
+  service_scope: bigint = 0n,
+  service_subscope: bigint = 0n,
+): any {
+  const idData = getIDDataInputs(passport)
+  if (!idData) return null
+  const privateNullifier = calculatePrivateNullifier(
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    Binary.from(passport.sodSignature),
+  )
+  const commIn = hashSaltDg1PrivateNullifier(
+    0n,
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    privateNullifier.toBigInt(),
+  )
+
+  let age = calculateAge(passport)
+
+  let minAge = 0
+  let maxAge = 0
+  if (query.age) {
+    if (query.age.gt) {
+      minAge = query.age.gt as number
+    } else if (query.age.gte) {
+      minAge = query.age.gte as number
+    } else if (query.age.range) {
+      minAge = query.age.range[0] as number
+      maxAge = query.age.range[1] as number
+    } else if (query.age.eq) {
+      minAge = query.age.eq as number
+      maxAge = query.age.eq as number
+    } else if (query.age.disclose) {
+      minAge = age
+      maxAge = age
+    }
+
+    if (query.age.lt) {
+      maxAge = query.age.lt as number
+    } else if (query.age.lte) {
+      maxAge = query.age.lte as number
+    }
+  }
+
+  return {
+    dg1: idData.dg1,
+    current_date: format(new Date(), "yyyyMMdd"),
+    comm_in: commIn.toHex(),
+    private_nullifier: privateNullifier.toHex(),
+    service_scope: service_scope.toString(),
+    service_subscope: service_subscope.toString(),
+    salt: salt.toString(),
+    min_age_required: minAge,
+    max_age_required: maxAge,
+  }
+}
+
+function padCountryList(countryList: string[]): string[] {
+  const paddedCountryList = Array(200).fill(new TextDecoder().decode(new Uint8Array([0, 0, 0])))
+  for (let i = 0; i < countryList.length; i++) {
+    paddedCountryList[i] = countryList[i]
+  }
+  return paddedCountryList
+}
+
+export function getCountryInclusionCircuitInputs(
+  passport: PassportViewModel,
+  query: Query,
+  salt: bigint,
+  service_scope: bigint = 0n,
+  service_subscope: bigint = 0n,
+): any {
+  const idData = getIDDataInputs(passport)
+  if (!idData) return null
+  const privateNullifier = calculatePrivateNullifier(
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    Binary.from(passport.sodSignature),
+  )
+  const commIn = hashSaltDg1PrivateNullifier(
+    0n,
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    privateNullifier.toBigInt(),
+  )
+
+  return {
+    dg1: idData.dg1,
+    country_list: padCountryList(query.nationality?.in ?? []),
+    comm_in: commIn.toHex(),
+    private_nullifier: privateNullifier.toHex(),
+    service_scope: service_scope.toString(),
+    service_subscope: service_subscope.toString(),
+    salt: salt.toString(),
+  }
+}
+
+export function getCountryExclusionCircuitInputs(
+  passport: PassportViewModel,
+  query: Query,
+  salt: bigint,
+  service_scope: bigint = 0n,
+  service_subscope: bigint = 0n,
+): any {
+  const idData = getIDDataInputs(passport)
+  if (!idData) return null
+  const privateNullifier = calculatePrivateNullifier(
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    Binary.from(passport.sodSignature),
+  )
+  const commIn = hashSaltDg1PrivateNullifier(
+    0n,
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    privateNullifier.toBigInt(),
+  )
+
+  const countryList: number[] = []
+  for (let i = 0; i < (query.nationality?.out ?? []).length; i++) {
+    const country: string = (query.nationality?.out ?? [])[i]
+    countryList.push(...getCountryWeightedSum(country as Alpha3Code))
+  }
+
+  return {
+    dg1: idData.dg1,
+    // Sort the country list in ascending order
+    country_list: padArrayWithZeros(countryList.sort((a, b) => a - b), 200),
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
     service_scope: service_scope.toString(),

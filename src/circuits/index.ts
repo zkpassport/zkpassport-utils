@@ -3,6 +3,11 @@ import { Binary } from "../binary"
 import { hashToField } from "@zkpassport/poseidon2/bn254"
 import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "../types"
 
+export interface ProofData {
+  publicInputs: string[]
+  proof: Uint8Array | string
+}
+
 export function calculatePrivateNullifier(dg1: Binary, sodSig: Binary): Binary {
     return Binary.from(
      hashToField([
@@ -75,4 +80,11 @@ export function calculatePrivateNullifier(dg1: Binary, sodSig: Binary): Binary {
     ).toHex()
   }
 
+export function getNullifierFromDisclosureProof(proofData: ProofData): bigint {
+  return BigInt(proofData.publicInputs[proofData.publicInputs.length - 1])
+}
+
 export { DisclosedData, createDisclosedDataRaw } from "./disclose";
+
+export * from "./country"
+export * from "./age"

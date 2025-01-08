@@ -1,3 +1,5 @@
+import { ProofData } from "."
+
 interface DisclosedDataRaw {
   issuingCountry: Uint8Array // 3 bytes
   nationality: Uint8Array // 3 bytes
@@ -7,11 +9,6 @@ interface DisclosedDataRaw {
   dateOfBirth: Uint8Array // 6 bytes
   name: Uint8Array // 39 bytes
   gender: Uint8Array // 1 byte
-}
-
-interface ProofData {
-  publicInputs: string[]
-  proof: Uint8Array | string
 }
 
 function stripChevrons(str: string): string {
@@ -78,7 +75,7 @@ export class DisclosedData {
   }
 }
 
-function parseDate(bytes: Uint8Array): Date {
+export function parseDate(bytes: Uint8Array): Date {
   const str = new TextDecoder().decode(bytes).replace(/\0/g, "")
   // Format: YYMMDD
   const year = parseInt(str.substring(0, 2))
