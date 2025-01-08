@@ -505,7 +505,7 @@ export function getDiscloseFlagsCircuitInputs(
     Binary.from(passport.sodSignature),
   )
   const commIn = hashSaltDg1PrivateNullifier(
-    0n,
+    salt,
     Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
     privateNullifier.toBigInt(),
   )
@@ -560,7 +560,7 @@ export function getAgeCircuitInputs(
     Binary.from(passport.sodSignature),
   )
   const commIn = hashSaltDg1PrivateNullifier(
-    0n,
+    salt,
     Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
     privateNullifier.toBigInt(),
   )
@@ -627,7 +627,7 @@ export function getCountryInclusionCircuitInputs(
     Binary.from(passport.sodSignature),
   )
   const commIn = hashSaltDg1PrivateNullifier(
-    0n,
+    salt,
     Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
     privateNullifier.toBigInt(),
   )
@@ -657,7 +657,7 @@ export function getCountryExclusionCircuitInputs(
     Binary.from(passport.sodSignature),
   )
   const commIn = hashSaltDg1PrivateNullifier(
-    0n,
+    salt,
     Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
     privateNullifier.toBigInt(),
   )
