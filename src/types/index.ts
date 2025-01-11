@@ -225,6 +225,7 @@ export type Service = {
   name: string
   logo: string
   purpose: string
+  scope?: string
 }
 
 export type QRCodeData = {

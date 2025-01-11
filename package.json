@@ -1,58 +1,62 @@
 {
   "name": "@zkpassport/utils",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "type": "module",
-  "types": "./dist/types/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "src",
     "dist"
   ],
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./binary": {
-      "default": "./dist/binary/index.js",
-      "types": "./dist/binary/index.d.ts"
+      "types": "./dist/binary/index.d.ts",
+      "default": "./dist/binary/index.js"
     },
     "./rsa": {
-      "default": "./dist/rsa.js",
-      "types": "./dist/rsa.d.ts"
+      "types": "./dist/rsa.d.ts",
+      "default": "./dist/rsa.js"
     },
     "./circuits": {
-      "default": "./dist/circuits/index.js",
-      "types": "./dist/circuits/index.d.ts"
+      "types": "./dist/circuits/index.d.ts",
+      "default": "./dist/circuits/index.js"
     },
     "./circuit-matcher": {
-      "default": "./dist/circuit-matcher.js",
-      "types": "./dist/circuit-matcher.d.ts"
+      "types": "./dist/circuit-matcher.d.ts",
+      "default": "./dist/circuit-matcher.js"
     },
     "./constants": {
-      "default": "./dist/constants.js",
-      "types": "./dist/constants.d.ts"
+      "types": "./dist/constants.d.ts",
+      "default": "./dist/constants.js"
     },
     "./merkle-tree": {
-      "default": "./dist/merkle-tree.js",
-      "types": "./dist/merkle-tree.d.ts"
+      "types": "./dist/merkle-tree.d.ts",
+      "default": "./dist/merkle-tree.js"
     },
     "./passport-reader": {
-      "default": "./dist/passport-reader/index.js",
-      "types": "./dist/passport-reader/index.d.ts"
+      "types": "./dist/passport-reader/index.d.ts",
+      "default": "./dist/passport-reader/index.js"
     },
     "./utils": {
-      "default": "./dist/utils.js",
-      "types": "./dist/utils.d.ts"
+      "types": "./dist/utils.d.ts",
+      "default": "./dist/utils.js"
     },
     "./barrett-reduction": {
-      "default": "./dist/barrett-reduction.js",
-      "types": "./dist/barrett-reduction.d.ts"
+      "types": "./dist/barrett-reduction.d.ts",
+      "default": "./dist/barrett-reduction.js"
     },
     "./csc-manager": {
-      "default": "./dist/csc-manager.js",
-      "types": "./dist/csc-manager.d.ts"
+      "types": "./dist/csc-manager.d.ts",
+      "default": "./dist/csc-manager.js"
     },
     "./types": {
       "types": "./dist/types/index.d.ts"
     }
   },
-  "sideEffects": false,
   "scripts": {
     "prepare": "npm i --save-dev @types/node && npm run build",
     "build": "tsc"
