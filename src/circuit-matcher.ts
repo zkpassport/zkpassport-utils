@@ -685,3 +685,120 @@ export function getCountryExclusionCircuitInputs(
     salt: salt.toString(),
   }
 }
+
+
+export function getBirthdateCircuitInputs(
+  passport: PassportViewModel,
+  query: Query,
+  salt: bigint,
+  service_scope: bigint = 0n,
+  service_subscope: bigint = 0n,
+): any {
+  const idData = getIDDataInputs(passport)
+  if (!idData) return null
+  const privateNullifier = calculatePrivateNullifier(
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    Binary.from(passport.sodSignature),
+  )
+  const commIn = hashSaltDg1PrivateNullifier(
+    salt,
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    privateNullifier.toBigInt(),
+  )
+
+  let minDate: Date | undefined
+  let maxDate: Date | undefined
+  if (query.birthdate) {
+    if (query.birthdate.gt) {
+      minDate = query.birthdate.gt as Date
+    } else if (query.birthdate.gte) {
+      minDate = query.birthdate.gte as Date
+    } else if (query.birthdate.range) {
+      minDate = query.birthdate.range[0] as Date
+      maxDate = query.birthdate.range[1] as Date
+    } else if (query.birthdate.eq) {
+      minDate = query.birthdate.eq as Date
+      maxDate = query.birthdate.eq as Date
+    } else if (query.birthdate.disclose) {
+      minDate = parseDate(new TextEncoder().encode(passport.dateOfBirth))
+      maxDate = parseDate(new TextEncoder().encode(passport.dateOfBirth))
+    }
+
+    if (query.birthdate.lt) {
+      maxDate = query.birthdate.lt as Date
+    } else if (query.birthdate.lte) {
+      maxDate = query.birthdate.lte as Date
+    }
+  }
+
+  return {
+    dg1: idData.dg1,
+    current_date: format(new Date(), "yyyyMMdd"),
+    comm_in: commIn.toHex(),
+    private_nullifier: privateNullifier.toHex(),
+    service_scope: service_scope.toString(),
+    service_subscope: service_subscope.toString(),
+    salt: salt.toString(),
+    // "11111111" means the date is ignored
+    min_date: minDate ? format(minDate, "yyyyMMdd") : "1".repeat(8),
+    max_date: maxDate ? format(maxDate, "yyyyMMdd") : "1".repeat(8),
+  }
+}
+
+export function getExpiryDateCircuitInputs(
+  passport: PassportViewModel,
+  query: Query,
+  salt: bigint,
+  service_scope: bigint = 0n,
+  service_subscope: bigint = 0n,
+): any {
+  const idData = getIDDataInputs(passport)
+  if (!idData) return null
+  const privateNullifier = calculatePrivateNullifier(
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    Binary.from(passport.sodSignature),
+  )
+  const commIn = hashSaltDg1PrivateNullifier(
+    salt,
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    privateNullifier.toBigInt(),
+  )
+
+  let minDate: Date | undefined
+  let maxDate: Date | undefined
+  if (query.expiry_date) {
+    if (query.expiry_date.gt) {
+      minDate = query.expiry_date.gt as Date
+    } else if (query.expiry_date.gte) {
+      minDate = query.expiry_date.gte as Date
+    } else if (query.expiry_date.range) {
+      minDate = query.expiry_date.range[0] as Date
+      maxDate = query.expiry_date.range[1] as Date
+    } else if (query.expiry_date.eq) {
+      minDate = query.expiry_date.eq as Date
+      maxDate = query.expiry_date.eq as Date
+    } else if (query.expiry_date.disclose) {
+      minDate = parseDate(new TextEncoder().encode(passport.passportExpiry))
+      maxDate = parseDate(new TextEncoder().encode(passport.passportExpiry))
+    }
+
+    if (query.expiry_date.lt) {
+      maxDate = query.expiry_date.lt as Date
+    } else if (query.expiry_date.lte) {
+      maxDate = query.expiry_date.lte as Date
+    }
+  }
+
+  return {
+    dg1: idData.dg1,
+    current_date: format(new Date(), "yyyyMMdd"),
+    comm_in: commIn.toHex(),
+    private_nullifier: privateNullifier.toHex(),
+    service_scope: service_scope.toString(),
+    service_subscope: service_subscope.toString(),
+    salt: salt.toString(),
+    // "11111111" means the date is ignored
+    min_date: minDate ? format(minDate, "yyyyMMdd") : "1".repeat(8),
+    max_date: maxDate ? format(maxDate, "yyyyMMdd") : "1".repeat(8),
+  }
+}
