@@ -20,16 +20,18 @@ export class PassportReader {
     if (this.dg1 === undefined || this.sod === undefined) {
       throw new Error("PassportReader not initialized")
     }
+    const isIDCard = this.dg1.length === 95
+    const mrz = this.dg1.slice(5).toString("ascii")
     // TODO: Implement the remaining properties
     return {
       appVersion: "",
-      mrz: this.dg1.toString("ascii"),
-      name: "",
-      dateOfBirth: "",
-      nationality: this.dg1.slice(59, 62).toString("ascii"),
-      gender: "",
-      passportNumber: "",
-      passportExpiry: "",
+      mrz: mrz,
+      name: mrz.slice(isIDCard ? 60 : 5, isIDCard ? 90 : 44),
+      dateOfBirth: mrz.slice(isIDCard ? 30 : 57, isIDCard ? 36 : 63),
+      nationality: mrz.slice(isIDCard ? 45 : 54, isIDCard ? 48 : 57),
+      gender: mrz.slice(isIDCard ? 37 : 64, isIDCard ? 38 : 65),
+      passportNumber: mrz.slice(isIDCard ? 5 : 44, isIDCard ? 14 : 53),
+      passportExpiry: mrz.slice(isIDCard ? 38 : 65, isIDCard ? 44 : 71),
       firstName: "",
       lastName: "",
       photo: "",

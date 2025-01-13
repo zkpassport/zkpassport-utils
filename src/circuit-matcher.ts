@@ -49,7 +49,7 @@ import {
   fromArrayBufferToBigInt,
 } from "./utils"
 import { parseDate } from "./circuits/disclose"
-import { Alpha3Code } from "i18n-iso-countries"
+import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
 
 export function isSignatureAlgorithmSupported(
   passport: PassportViewModel,
@@ -127,8 +127,8 @@ export function getCSCForPassport(
       authorityKeyIdentifier = Binary.from(parsed.keyIdentifier.buffer).toHex().replace("0x", "")
     }
   }
-  // TODO: Get this from TBS certificate instead of DG1?
-  const country = passport?.nationality === "D<<" ? "DEU" : passport?.nationality
+  const country = getDSCCountry(passport)
+  const formattedCountry = country === "D<<" ? "DEU" : country
 
   const checkAgainstAuthorityKeyIdentifier = (cert: Certificate) => {
     return (
@@ -151,7 +151,7 @@ export function getCSCForPassport(
 
   const certificate = cscMasterlist.certificates.find((cert) => {
     return (
-      cert.country.toLowerCase() === country.toLowerCase() &&
+      cert.country.toLowerCase() === formattedCountry.toLowerCase() &&
       (checkAgainstAuthorityKeyIdentifier(cert) || checkAgainstPrivateKeyUsagePeriod(cert))
     )
   })
@@ -280,7 +280,7 @@ export function getIDDataCircuitInputs(passport: PassportViewModel, salt: bigint
 
   const commIn = hashSaltCountryTbs(
     salt,
-    passport.nationality, // TODO: Use country from CSC/DSC here
+    getDSCCountry(passport),
     Binary.from(passport.tbsCertificate),
     maxTbsLength,
   )
@@ -320,6 +320,12 @@ export function getIDDataCircuitInputs(passport: PassportViewModel, salt: bigint
   }
 }
 
+export function getDSCCountry(passport: PassportViewModel): string {
+  const country = passport.sod.certificate.tbs.issuer?.match(/countryName=([A-Z]+)/)?.[1]
+  const formattedCountryCode = country?.length === 2 ? alpha2ToAlpha3(country) : country
+  return formattedCountryCode ?? passport.nationality
+}
+
 export function getIntegrityCheckCircuitInputs(
   passport: PassportViewModel,
   salt: bigint,
@@ -336,7 +342,7 @@ export function getIntegrityCheckCircuitInputs(
   )
   const comm_in = hashSaltCountrySignedAttrDg1PrivateNullifier(
     salt,
-    passport.nationality, // TODO: Use country from CSC/DSC here
+    getDSCCountry(passport),
     Binary.from(passport.signedAttributes).padEnd(SIGNED_ATTR_INPUT_SIZE),
     BigInt(passport.signedAttributes.length),
     Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
