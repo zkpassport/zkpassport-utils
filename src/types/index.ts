@@ -1,5 +1,6 @@
-import type { Alpha2Code, Alpha3Code, CountryName } from "i18n-iso-countries"
+import type {  Alpha3Code } from "i18n-iso-countries"
 import type { SOD } from "../passport-reader"
+import type { CountryName } from "./countries"
 
 export type SavedPassport = {
   id: string
@@ -137,14 +138,16 @@ export type DisclosableIDCredential =
 export type NumericalIDCredential = "age" | "birthdate" | "expiry_date"
 
 export type IDCredential = NumericalIDCredential | DisclosableIDCredential
-export type IDCredentialValue<T extends IDCredential> = T extends "nationality" | "issuing_country"
-  ? CountryName<{ select: "all" }> | Alpha2Code | Alpha3Code
-  : T extends "gender"
-  ? "male" | "female"
-  : T extends "document_type"
-  ? "passport" | "id_card" | "residence_permit" | "other"
-  : T extends NumericalIDCredential
-  ? number | Date
+export type IDCredentialValue<T extends IDCredential> = T extends 'nationality' | 'issuing_country'
+  ? CountryName | Alpha3Code
+  : T extends 'gender'
+  ? 'male' | 'female'
+  : T extends 'document_type'
+  ? 'passport' | 'id_card' | 'residence_permit' | 'other'
+  : T extends 'age'
+  ? number
+  : T extends 'birthdate' | 'expiry_date'
+  ? Date
   : string
 
 export type IDCredentialConfig = {
@@ -362,3 +365,5 @@ export type Certificate = {
 export type CSCMasterlist = {
   certificates: Certificate[]
 }
+
+export type { CountryName } from "./countries"

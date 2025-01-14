@@ -1,69 +1,94 @@
 {
   "name": "@zkpassport/utils",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
   "files": [
     "src",
     "dist"
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/cjs/index.js"
     },
     "./binary": {
-      "types": "./dist/binary/index.d.ts",
-      "default": "./dist/binary/index.js"
+      "types": "./dist/esm/binary/index.d.ts",
+      "import": "./dist/esm/binary/index.js",
+      "require": "./dist/cjs/binary/index.js",
+      "default": "./dist/cjs/binary/index.js"
     },
     "./rsa": {
-      "types": "./dist/rsa.d.ts",
-      "default": "./dist/rsa.js"
+      "types": "./dist/esm/rsa.d.ts",
+      "import": "./dist/esm/rsa.js",
+      "require": "./dist/cjs/rsa.js",
+      "default": "./dist/cjs/rsa.js"
     },
     "./circuits": {
-      "types": "./dist/circuits/index.d.ts",
-      "default": "./dist/circuits/index.js"
+      "types": "./dist/esm/circuits/index.d.ts",
+      "import": "./dist/esm/circuits/index.js",
+      "require": "./dist/cjs/circuits/index.js",
+      "default": "./dist/cjs/circuits/index.js"
     },
     "./circuit-matcher": {
-      "types": "./dist/circuit-matcher.d.ts",
-      "default": "./dist/circuit-matcher.js"
+      "types": "./dist/esm/circuit-matcher.d.ts",
+      "import": "./dist/esm/circuit-matcher.js",
+      "require": "./dist/cjs/circuit-matcher.js",
+      "default": "./dist/cjs/circuit-matcher.js"
     },
     "./constants": {
-      "types": "./dist/constants.d.ts",
-      "default": "./dist/constants.js"
+      "types": "./dist/esm/constants/index.d.ts",
+      "import": "./dist/esm/constants/index.js",
+      "require": "./dist/cjs/constants/index.js",
+      "default": "./dist/cjs/constants/index.js"
     },
     "./merkle-tree": {
-      "types": "./dist/merkle-tree.d.ts",
-      "default": "./dist/merkle-tree.js"
+      "types": "./dist/esm/merkle-tree.d.ts",
+      "import": "./dist/esm/merkle-tree.js",
+      "require": "./dist/cjs/merkle-tree.js",
+      "default": "./dist/cjs/merkle-tree.js"
     },
     "./passport-reader": {
-      "types": "./dist/passport-reader/index.d.ts",
-      "default": "./dist/passport-reader/index.js"
+      "types": "./dist/esm/passport-reader/index.d.ts",
+      "import": "./dist/esm/passport-reader/index.js",
+      "require": "./dist/cjs/passport-reader/index.js",
+      "default": "./dist/cjs/passport-reader/index.js"
     },
     "./utils": {
-      "types": "./dist/utils.d.ts",
-      "default": "./dist/utils.js"
+      "types": "./dist/esm/utils.d.ts",
+      "import": "./dist/esm/utils.js",
+      "require": "./dist/cjs/utils.js",
+      "default": "./dist/cjs/utils.js"
     },
     "./barrett-reduction": {
-      "types": "./dist/barrett-reduction.d.ts",
-      "default": "./dist/barrett-reduction.js"
+      "types": "./dist/esm/barrett-reduction.d.ts",
+      "import": "./dist/esm/barrett-reduction.js",
+      "require": "./dist/cjs/barrett-reduction.js",
+      "default": "./dist/cjs/barrett-reduction.js"
     },
     "./csc-manager": {
-      "types": "./dist/csc-manager.d.ts",
-      "default": "./dist/csc-manager.js"
+      "types": "./dist/esm/csc-manager.d.ts",
+      "import": "./dist/esm/csc-manager.js",
+      "require": "./dist/cjs/csc-manager.js",
+      "default": "./dist/cjs/csc-manager.js"
     },
     "./types": {
-      "types": "./dist/types/index.d.ts"
+      "types": "./dist/esm/types/index.d.ts"
     }
   },
   "scripts": {
     "prepare": "npm i --save-dev @types/node && npm run build",
-    "build": "tsc"
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/node": "^22.10.5",
+    "@types/node": "^22.10.6",
     "typescript": "^5.0.0"
   },
   "dependencies": {
@@ -79,7 +104,7 @@
     "@peculiar/asn1-x509": "^2.3.13",
     "@peculiar/x509": "^1.12.3",
     "@zk-kit/lean-imt": "^2.2.1",
-    "@zkpassport/poseidon2": "^0.5.1",
+    "@zkpassport/poseidon2": "^0.5.2",
     "date-fns": "^4.1.0",
     "i18n-iso-countries": "^7.13.0"
   }

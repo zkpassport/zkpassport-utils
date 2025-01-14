@@ -1,20 +1,18 @@
 // Type declaration for the crypto module
-declare let crypto: {
-  generateKeyPairSync: typeof import('crypto')['generateKeyPairSync']
-  createSign: typeof import('crypto')['createSign']
-  createVerify: typeof import('crypto')['createVerify']
-} | undefined;
+declare let crypto:
+  | {
+      generateKeyPairSync: typeof import("crypto")["generateKeyPairSync"]
+      createSign: typeof import("crypto")["createSign"]
+      createVerify: typeof import("crypto")["createVerify"]
+    }
+  | undefined
 
 // Conditionally import crypto in Node.js environment
-if (typeof window === 'undefined') {
+if (typeof window === "undefined") {
   try {
-    const nodeCrypto = require('crypto');
-    crypto = nodeCrypto;
-  } catch {
-    crypto = undefined;
-  }
-} else {
-  crypto = undefined;
+    const nodeCrypto = require("crypto")
+    crypto = nodeCrypto
+  } catch {}
 }
 
 import { AsnParser } from "@peculiar/asn1-schema"
@@ -29,7 +27,7 @@ import { fromArrayBufferToBigInt } from "./utils"
  */
 export function generateRSAKeyPair(keySize: number = 2048) {
   if (!crypto) {
-    throw new Error('Crypto functionality is not available in this environment');
+    throw new Error("Crypto functionality is not available in this environment")
   }
   const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
     modulusLength: keySize, // Key size in bits
@@ -42,7 +40,7 @@ export function generateRSAKeyPair(keySize: number = 2048) {
       format: "der",
     },
   })
-  return { privateKey, publicKey }
+  return { privateKey, publicKey: publicKey as Buffer }
 }
 
 export function getRSAPublicKeyParams(publicKey: Buffer): {
@@ -70,7 +68,7 @@ export function signData(
   hashAlgorithm: string = "RSA-SHA256",
 ): Buffer {
   if (!crypto) {
-    throw new Error('Crypto functionality is not available in this environment');
+    throw new Error("Crypto functionality is not available in this environment")
   }
   const sign = crypto.createSign(hashAlgorithm)
   sign.update(data)
@@ -94,7 +92,7 @@ export function verifySignature(
   hashAlgorithm: string = "SHA256",
 ): boolean {
   if (!crypto) {
-    throw new Error('Crypto functionality is not available in this environment');
+    throw new Error("Crypto functionality is not available in this environment")
   }
   const verify = crypto.createVerify(hashAlgorithm)
   verify.update(data)

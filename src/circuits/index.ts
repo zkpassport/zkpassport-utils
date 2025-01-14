@@ -1,6 +1,6 @@
 import { CERTIFICATE_REGISTRY_ID, CERT_TYPE_CSC } from "../constants"
 import { Binary } from "../binary"
-import { hashToField } from "@zkpassport/poseidon2/bn254"
+import { hashToFieldBN254 as hashToField } from "@zkpassport/poseidon2"
 import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "../types"
 
 export interface ProofData {
@@ -88,3 +88,4 @@ export { DisclosedData, createDisclosedDataRaw } from "./disclose";
 
 export * from "./country"
 export * from "./age"
+export * from "./date"

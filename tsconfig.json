@@ -5,10 +5,10 @@
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "target": "esnext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "outDir": "./dist",
+    "target": "es2020",
+    "module": "es2020",
+    "moduleResolution": "node",
+    "outDir": "./dist/esm",
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
@@ -21,4 +21,4 @@
     "importHelpers": true
   },
   "include": ["src"]
-} 
+}
