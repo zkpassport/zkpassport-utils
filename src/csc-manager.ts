@@ -147,11 +147,21 @@ export function getCurveName(ecParams: ECParameters): string {
     `0x${Buffer.from(ecParams.specifiedCurve.fieldID.parameters.slice(2)).toString("hex")}`,
   )
 
-  if (a == p256.CURVE.a && b == p256.CURVE.b && n == p256.CURVE.n && p == p256.CURVE.p) {
+  if (a == p256.CURVE.a && b == p256.CURVE.b && n == p256.CURVE.n && p == p256.CURVE.Fp.ORDER) {
     return "P-256"
-  } else if (a == p384.CURVE.a && b == p384.CURVE.b && n == p384.CURVE.n && p == p384.CURVE.p) {
+  } else if (
+    a == p384.CURVE.a &&
+    b == p384.CURVE.b &&
+    n == p384.CURVE.n &&
+    p == p384.CURVE.Fp.ORDER
+  ) {
     return "P-384"
-  } else if (a == p521.CURVE.a && b == p521.CURVE.b && n == p521.CURVE.n && p == p521.CURVE.p) {
+  } else if (
+    a == p521.CURVE.a &&
+    b == p521.CURVE.b &&
+    n == p521.CURVE.n &&
+    p == p521.CURVE.Fp.ORDER
+  ) {
     return "P-521"
   }
 
