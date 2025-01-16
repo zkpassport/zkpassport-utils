@@ -1,22 +1,26 @@
-import { hashToFieldBN254 as hashToField } from "@zkpassport/poseidon2"
 import { Binary } from "./binary"
-import { LeanIMT } from "@zk-kit/lean-imt"
+import { hashToFieldBN254 as poseidon2HashToField } from "@zkpassport/poseidon2"
+import { IMT } from "@zk-kit/imt"
 
-// NOTE: height is currently not used because we're using a _lean_ imt that doesn't yet support padding
-export async function computeMerkleProof(height: number, leaves: Binary[], index: number) {
+function poseidon2(values: any[]) {
+  return poseidon2HashToField(values.map((v) => BigInt(v)))
+}
+
+export function computeMerkleProof(leaves: Binary[], index: number, height: number) {
   if (index < 0 || index >= leaves.length) throw new Error("Invalid index")
-  
-  const hash = (a: bigint, b: bigint) =>
-    hashToField([a, b])
-
-  const tree = new LeanIMT(
-    hash,
+  const zeroValue = 0
+  const arity = 2
+  const tree = new IMT(
+    poseidon2,
+    height,
+    zeroValue,
+    arity,
     leaves.map((leaf) => leaf.toBigInt()),
   )
-  const proof = tree.generateProof(index)
+  const proof = tree.createProof(index)
   return {
-    root: "0x" + proof.root.toString(16),
-    index: proof.index,
-    path: proof.siblings.map((x) => "0x" + x.toString(16)),
+    root: Binary.from(BigInt(proof.root)).toHex(),
+    index: proof.leafIndex,
+    path: proof.siblings.flatMap((v) => Binary.from(BigInt(v)).toHex()),
   }
 }

@@ -223,16 +223,11 @@ export async function getDSCCircuitInputs(
 
   // Generate the certificate registry merkle proof
   const cscMasterlist = masterlist ?? getCSCMasterlist()
-  const leaves = merkleTreeLeaves ?? cscMasterlist.certificates.map((l) => Binary.fromHex(getCertificateLeafHash(l)))
-  const index = cscMasterlist.certificates.findIndex((l) => l === csc)
-  // Fill up empty leaves with 0x01 (up to CERTIFICATE_PAD_EMPTY_LEAVES)
-  const emptyLeavesNeeded = CERTIFICATE_PAD_EMPTY_LEAVES - leaves.length
-  if (emptyLeavesNeeded > 0) {
-    const emptyLeaves = Array(emptyLeavesNeeded).fill(Binary.fromHex("0x01"))
-    leaves.push(...emptyLeaves)
-  }
-  const merkleProof = await computeMerkleProof(CERTIFICATE_REGISTRY_HEIGHT, leaves, index)
-
+  const leaves =
+    merkleTreeLeaves ??
+    cscMasterlist.certificates.map((cert) => Binary.fromHex(getCertificateLeafHash(cert)))
+  const index = cscMasterlist.certificates.findIndex((cert) => cert === csc)
+  const merkleProof = await computeMerkleProof(leaves, index, CERTIFICATE_REGISTRY_HEIGHT)
   const inputs = {
     certificate_registry_root: merkleProof.root,
     certificate_registry_index: merkleProof.index,
@@ -326,10 +321,7 @@ export function getDSCCountry(passport: PassportViewModel): string {
   return formattedCountryCode ?? passport.nationality
 }
 
-export function getIntegrityCheckCircuitInputs(
-  passport: PassportViewModel,
-  salt: bigint,
-): any {
+export function getIntegrityCheckCircuitInputs(passport: PassportViewModel, salt: bigint): any {
   const maxTbsLength = getTBSMaxLen(passport)
   const dscData = getDSCDataInputs(passport, maxTbsLength)
   if (!dscData) return null
@@ -677,7 +669,10 @@ export function getCountryExclusionCircuitInputs(
   return {
     dg1: idData.dg1,
     // Sort the country list in ascending order
-    country_list: padArrayWithZeros(countryList.sort((a, b) => a - b), 200),
+    country_list: padArrayWithZeros(
+      countryList.sort((a, b) => a - b),
+      200,
+    ),
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
     service_scope: service_scope.toString(),
@@ -685,7 +680,6 @@ export function getCountryExclusionCircuitInputs(
     salt: salt.toString(),
   }
 }
-
 
 export function getBirthdateCircuitInputs(
   passport: PassportViewModel,
