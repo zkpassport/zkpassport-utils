@@ -1,5 +1,4 @@
 import { Binary } from "../binary"
-import { beforeAll, describe, expect, it } from "bun:test"
 import { SOD } from "./sod"
 
 const FIXTURE_EF_SOD =
