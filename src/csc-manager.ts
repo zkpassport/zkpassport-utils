@@ -228,14 +228,16 @@ export function parseCertificate(content: Buffer | string): Certificate {
   let countryCode: string = "Unknown"
   // Iterate over the issuer values to find the country code
   for (const val of x509.tbsCertificate.issuer.values()) {
-    if (val[0].type === "2.5.4.6") {
-      countryCode = val[0].value.printableString?.toUpperCase() ?? "Unknown"
-      const temp = countryCode
-      countryCode = alpha2ToAlpha3(countryCode) ?? "N/A"
-      // Some country codes are re not ISO 3166-1 alpha-2 codes
-      // or do not correspond to any specific nation (e.g. EU, UN)
-      if (countryCode === "N/A" && !!temp) {
-        countryCode = temp.length === 2 ? `${temp}_` : temp
+    for (const attrAndType of val) {
+      if (attrAndType.type === "2.5.4.6") {
+        countryCode = attrAndType.value.printableString?.toUpperCase() ?? "Unknown"
+        const temp = countryCode
+        countryCode = alpha2ToAlpha3(countryCode) ?? "N/A"
+        // Some country codes are re not ISO 3166-1 alpha-2 codes
+        // or do not correspond to any specific nation (e.g. EU, UN)
+        if (countryCode === "N/A" && !!temp) {
+          countryCode = temp.length === 2 ? `${temp}_` : temp
+        }
       }
     }
   }

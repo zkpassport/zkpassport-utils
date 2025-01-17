@@ -170,14 +170,19 @@ function getDSCDataInputs(
   }
   if (signatureAlgorithm === "ECDSA") {
     const ecdsaInfo = getECDSAInfo(tbsCertificate)
+    // The first byte is 0x04, which is the ASN.1 sequence tag for a SEQUENCE of two integers
+    // So we skip the first byte
+    const dscPubkeyX = Array.from(
+      ecdsaInfo.publicKey.slice(1, (ecdsaInfo.publicKey.length - 1) / 2 + 1),
+    )
+    const dscPubkeyY = Array.from(
+      ecdsaInfo.publicKey.slice((ecdsaInfo.publicKey.length - 1) / 2 + 1),
+    )
     return {
       tbs_certificate: padArrayWithZeros(passport?.tbsCertificate ?? [], maxTbsLength),
-      pubkey_offset_in_tbs: getOffsetInArray(
-        passport?.tbsCertificate ?? [],
-        Array.from(ecdsaInfo.publicKey.slice(0, 32)),
-      ),
-      dsc_pubkey_x: Array.from(ecdsaInfo.publicKey.slice(0, 32)),
-      dsc_pubkey_y: Array.from(ecdsaInfo.publicKey.slice(32)),
+      pubkey_offset_in_tbs: getOffsetInArray(passport?.tbsCertificate ?? [], dscPubkeyX),
+      dsc_pubkey_x: dscPubkeyX,
+      dsc_pubkey_y: dscPubkeyY,
     }
   } else {
     const { modulus, exponent } = getRSAInfo(tbsCertificate)
@@ -207,6 +212,62 @@ function getIDDataInputs(passport: PassportViewModel): IDDataInputs {
     dg1: padArrayWithZeros(dg1?.value ?? [], 95),
   }
   return id_data
+}
+
+export function processECDSASignature(signature: number[], byteSize: number): number[] {
+  if (signature[0] !== 0x30) {
+    // Not a valid ASN.1 sequence
+    return signature
+  }
+  const innerLengthIndex = signature[1] == signature.length - 2 ? 1 : 2
+  // This is the length of the inner sequence
+  const innerLength = signature[innerLengthIndex]
+  if (
+    signature[innerLengthIndex + 1] !== 0x02 ||
+    innerLength !== signature.length - innerLengthIndex - 1
+  ) {
+    // Not a valid ASN.1 sequence
+    return signature
+  }
+  const rLength = signature[innerLengthIndex + 2]
+  let r = signature.slice(innerLengthIndex + 3, innerLengthIndex + 3 + rLength)
+
+  if (signature[innerLengthIndex + 3 + rLength] !== 0x02) {
+    // Not a valid ASN.1 sequence
+    return signature
+  }
+  const sLength = signature[innerLengthIndex + 3 + rLength + 1]
+  let s = signature.slice(
+    innerLengthIndex + 3 + rLength + 2,
+    innerLengthIndex + 3 + rLength + 2 + sLength,
+  )
+
+  // Remove leading 0s
+  for (let i = 0; i < r.length; i++) {
+    if (r[i] !== 0x00) {
+      r = r.slice(i)
+      break
+    }
+  }
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] !== 0x00) {
+      s = s.slice(i)
+      break
+    }
+  }
+  // Pad r and s to the expected byte size
+  r = padArrayWithZeros(r, byteSize)
+  s = padArrayWithZeros(s, byteSize)
+  return [...r, ...s]
+}
+
+export function getBitSizeFromCurve(curve: string): number {
+  const curveName = curve
+    .replace("brainpoolP", "")
+    .replace("nist", "")
+    .replace("-", "")
+    .toLowerCase()
+  return Number(curveName.replace("p", ""))
 }
 
 export async function getDSCCircuitInputs(
@@ -240,13 +301,16 @@ export async function getDSCCircuitInputs(
   const maxTbsLength = getTBSMaxLen(passport)
   if (signatureAlgorithm === "ECDSA") {
     const cscPublicKey = csc?.public_key as ECDSACSCPublicKey
-    const publicKeyXBytes = Buffer.from(cscPublicKey.public_key_x ?? "", "hex")
-    const publicKeyYBytes = Buffer.from(cscPublicKey.public_key_y ?? "", "hex")
+    const publicKeyXBytes = Buffer.from(cscPublicKey.public_key_x.replace("0x", ""), "hex")
+    const publicKeyYBytes = Buffer.from(cscPublicKey.public_key_y.replace("0x", ""), "hex")
+    const curve = (csc.public_key as ECDSACSCPublicKey).curve
+    const bitSize = getBitSizeFromCurve(curve)
+    const dscSignature = processECDSASignature(passport?.dscSignature ?? [], Math.ceil(bitSize / 8))
     return {
       ...inputs,
       csc_pubkey_x: Array.from(publicKeyXBytes),
       csc_pubkey_y: Array.from(publicKeyYBytes),
-      dsc_signature: passport?.dscSignature ?? [],
+      dsc_signature: dscSignature,
       tbs_certificate: padArrayWithZeros(passport?.tbsCertificate ?? [], maxTbsLength),
       tbs_certificate_len: passport?.tbsCertificate?.length,
     }
