@@ -1,8 +1,8 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} **/
 export default {
   testEnvironment: "node",
   transform: {
-    "^.+.tsx?$": ["ts-jest", {}],
+    "\\.[jt]sx?$": "babel-jest",
   },
-  testEnvironment: "node",
+  testMatch: ["<rootDir>/src/**/*.test.ts"],
+  transformIgnorePatterns: ["/node_modules/(?!(@zkpassport|@zk-kit)/.*)"],
 }
