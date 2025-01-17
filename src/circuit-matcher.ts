@@ -1,6 +1,5 @@
 import cscMasterlistFile from "./assets/certificates/csc-masterlist.json"
 import {
-  CERTIFICATE_PAD_EMPTY_LEAVES,
   CERTIFICATE_REGISTRY_HEIGHT,
   CERTIFICATE_REGISTRY_ID,
   DG1_INPUT_SIZE,
@@ -46,7 +45,6 @@ import {
   getBitSize,
   getOffsetInArray,
   padArrayWithZeros,
-  fromArrayBufferToBigInt,
 } from "./utils"
 import { parseDate } from "./circuits/disclose"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
