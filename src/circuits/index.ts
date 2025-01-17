@@ -71,7 +71,9 @@ export function getCertificateLeafHash(
   if (cert.public_key.type === "rsaEncryption") {
     publicKey = Binary.from((cert.public_key as RSACSCPublicKey).modulus)
   } else if (cert.public_key.type === "ecPublicKey") {
-    publicKey = Binary.from((cert.public_key as ECDSACSCPublicKey).public_key_x)
+    publicKey = Binary.from((cert.public_key as ECDSACSCPublicKey).public_key_x).concat(
+      Binary.from((cert.public_key as ECDSACSCPublicKey).public_key_y),
+    )
   } else {
     throw new Error("Unsupported signature algorithm")
   }
