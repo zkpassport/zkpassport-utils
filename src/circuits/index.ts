@@ -1,7 +1,7 @@
 import { CERTIFICATE_REGISTRY_ID, CERT_TYPE_CSC } from "../constants"
 import { Binary } from "../binary"
 import { hashToFieldBN254 as hashToField } from "@zkpassport/poseidon2"
-import { Certificate, ECDSACSCPublicKey, RSACSCPublicKey } from "../types"
+import { Certificate, ECDSACSCPublicKey, PackagedCircuit, RSACSCPublicKey } from "../types"
 
 export interface ProofData {
   publicInputs: string[]
@@ -101,6 +101,23 @@ export function getServiceScopeFromDisclosureProof(proofData: ProofData): bigint
 
 export function getCommitmentInFromDisclosureProof(proofData: ProofData): bigint {
   return BigInt(proofData.publicInputs[0])
+}
+
+export async function getHostedPackagedCircuitByVkeyHash(
+  vkeyHash: string,
+): Promise<PackagedCircuit> {
+  const response = await fetch(`https://circuits.zkpassport.id/artifacts/${vkeyHash}.json`)
+  const circuit = await response.json()
+  return circuit
+}
+
+export async function getHostedPackagedCircuitByName(
+  version: `v${number}.${number}.${number}`,
+  name: string,
+): Promise<PackagedCircuit> {
+  const response = await fetch(`https://circuits.zkpassport.id/${version}/${name}.json`)
+  const circuit = await response.json()
+  return circuit
 }
 
 export { DisclosedData, createDisclosedDataRaw } from "./disclose"

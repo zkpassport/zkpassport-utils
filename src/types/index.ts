@@ -1,4 +1,4 @@
-import type {  Alpha3Code } from "i18n-iso-countries"
+import type { Alpha3Code } from "i18n-iso-countries"
 import type { SOD } from "../passport-reader"
 import type { CountryName } from "./countries"
 
@@ -123,6 +123,25 @@ export type Circuit = {
   names: string[]
 }
 
+export type PackagedCircuit = {
+  name: string
+  noir_version: string
+  bb_version: string
+  abi: {
+    parameters: Parameter[]
+    param_witnesses: {
+      [key: string]: { start: number; end: number }[]
+    }
+    return_type: any
+    return_witnesses: any[]
+    error_types: any
+  }
+  bytecode: string
+  vkey: string
+  vkey_hash: string
+  hash: string
+}
+
 export type DisclosableIDCredential =
   | "birthdate"
   | "expiry_date"
@@ -138,15 +157,15 @@ export type DisclosableIDCredential =
 export type NumericalIDCredential = "age" | "birthdate" | "expiry_date"
 
 export type IDCredential = NumericalIDCredential | DisclosableIDCredential
-export type IDCredentialValue<T extends IDCredential> = T extends 'nationality' | 'issuing_country'
+export type IDCredentialValue<T extends IDCredential> = T extends "nationality" | "issuing_country"
   ? CountryName | Alpha3Code
-  : T extends 'gender'
-  ? 'male' | 'female'
-  : T extends 'document_type'
-  ? 'passport' | 'id_card' | 'residence_permit' | 'other'
-  : T extends 'age'
+  : T extends "gender"
+  ? "male" | "female"
+  : T extends "document_type"
+  ? "passport" | "id_card" | "residence_permit" | "other"
+  : T extends "age"
   ? number
-  : T extends 'birthdate' | 'expiry_date'
+  : T extends "birthdate" | "expiry_date"
   ? Date
   : string
 
