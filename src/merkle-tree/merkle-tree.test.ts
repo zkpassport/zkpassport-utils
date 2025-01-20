@@ -1,5 +1,5 @@
-import { Binary } from "./binary"
-import { computeMerkleProof } from "./merkle-tree"
+import { Binary } from "../binary"
+import { computeMerkleProof } from "."
 
 describe("merkle tree", () => {
   test("compute merkle proof", async () => {

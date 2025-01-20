@@ -1,6 +1,6 @@
 import { CERTIFICATE_REGISTRY_ID, CERT_TYPE_CSC } from "../constants"
 import { Binary } from "../binary"
-import { hashToFieldBN254 as hashToField } from "@zkpassport/poseidon2"
+import { hashToFieldAsyncBN254 as hashToField } from "@zkpassport/poseidon2"
 import { Certificate, ECDSACSCPublicKey, PackagedCircuit, RSACSCPublicKey } from "../types"
 
 export interface ProofData {
@@ -8,36 +8,36 @@ export interface ProofData {
   proof: Uint8Array | string
 }
 
-export function calculatePrivateNullifier(dg1: Binary, sodSig: Binary): Binary {
+export async function calculatePrivateNullifier(dg1: Binary, sodSig: Binary): Promise<Binary> {
   return Binary.from(
-    hashToField([
+    await hashToField([
       ...Array.from(dg1).map((x) => BigInt(x)),
       ...Array.from(sodSig).map((x) => BigInt(x)),
     ]),
   )
 }
 
-export function hashSaltCountryTbs(
+export async function hashSaltCountryTbs(
   salt: bigint,
   country: string,
   tbs: Binary,
   maxTbsLength: number,
-): Binary {
+): Promise<Binary> {
   const result: bigint[] = []
   result.push(salt)
   result.push(...country.split("").map((x) => BigInt(x.charCodeAt(0))))
   result.push(...Array.from(tbs.padEnd(maxTbsLength)).map((x) => BigInt(x)))
-  return Binary.from(hashToField(result.map((x) => BigInt(x))))
+  return Binary.from(await hashToField(result.map((x) => BigInt(x))))
 }
 
-export function hashSaltCountrySignedAttrDg1PrivateNullifier(
+export async function hashSaltCountrySignedAttrDg1PrivateNullifier(
   salt: bigint,
   country: string,
   paddedSignedAttr: Binary,
   signedAttrSize: bigint,
   dg1: Binary,
   privateNullifier: bigint,
-): Binary {
+): Promise<Binary> {
   const result: bigint[] = []
   result.push(salt)
   result.push(...country.split("").map((x) => BigInt(x.charCodeAt(0))))
@@ -45,25 +45,25 @@ export function hashSaltCountrySignedAttrDg1PrivateNullifier(
   result.push(signedAttrSize)
   result.push(...Array.from(dg1).map((x) => BigInt(x)))
   result.push(privateNullifier)
-  return Binary.from(hashToField(result.map((x) => BigInt(x))))
+  return Binary.from(await hashToField(result.map((x) => BigInt(x))))
 }
 
-export function hashSaltDg1PrivateNullifier(
+export async function hashSaltDg1PrivateNullifier(
   salt: bigint,
   dg1: Binary,
   privateNullifier: bigint,
-): Binary {
+): Promise<Binary> {
   const result: bigint[] = []
   result.push(salt)
   result.push(...Array.from(dg1).map((x) => BigInt(x)))
   result.push(privateNullifier)
-  return Binary.from(hashToField(result.map((x) => BigInt(x))))
+  return Binary.from(await hashToField(result.map((x) => BigInt(x))))
 }
 
-export function getCertificateLeafHash(
+export async function getCertificateLeafHash(
   cert: Certificate,
   options?: { registry_id?: number; cert_type?: number },
-): string {
+): Promise<string> {
   const registryId = options?.registry_id ?? CERTIFICATE_REGISTRY_ID
   const certType = options?.cert_type ?? CERT_TYPE_CSC
 
@@ -78,7 +78,7 @@ export function getCertificateLeafHash(
     throw new Error("Unsupported signature algorithm")
   }
   return Binary.from(
-    hashToField([
+    await hashToField([
       BigInt(registryId),
       BigInt(certType),
       ...Array.from(cert.country).map((char: string) => BigInt(char.charCodeAt(0))),

@@ -139,7 +139,7 @@ export type PackagedCircuit = {
   bytecode: string
   vkey: string
   vkey_hash: string
-  hash: string
+  hash: number
 }
 
 export type DisclosableIDCredential =

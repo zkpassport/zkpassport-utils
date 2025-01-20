@@ -1,6 +1,6 @@
 {
   "name": "@zkpassport/utils",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -47,10 +47,10 @@
       "default": "./dist/cjs/constants/index.js"
     },
     "./merkle-tree": {
-      "types": "./dist/esm/merkle-tree.d.ts",
-      "import": "./dist/esm/merkle-tree.js",
-      "require": "./dist/cjs/merkle-tree.js",
-      "default": "./dist/cjs/merkle-tree.js"
+      "types": "./dist/esm/merkle-tree/index.d.ts",
+      "import": "./dist/esm/merkle-tree/index.js",
+      "require": "./dist/cjs/merkle-tree/index.js",
+      "default": "./dist/cjs/merkle-tree/index.js"
     },
     "./passport-reader": {
       "types": "./dist/esm/passport-reader/index.d.ts",
@@ -109,8 +109,8 @@
     "@peculiar/asn1-schema": "^2.3.13",
     "@peculiar/asn1-x509": "^2.3.13",
     "@peculiar/x509": "^1.12.3",
-    "@zk-kit/imt": "^2.0.0-beta.7",
-    "@zkpassport/poseidon2": "^0.5.2",
+    "@zk-kit/utils": "^1.2.1",
+    "@zkpassport/poseidon2": "^0.5.3",
     "date-fns": "^4.1.0",
     "i18n-iso-countries": "^7.13.0"
   }
