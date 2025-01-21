@@ -106,7 +106,9 @@ export function getCommitmentInFromDisclosureProof(proofData: ProofData): bigint
 export async function getHostedPackagedCircuitByVkeyHash(
   vkeyHash: string,
 ): Promise<PackagedCircuit> {
-  const response = await fetch(`https://circuits.zkpassport.id/artifacts/${vkeyHash}.json`)
+  const response = await fetch(
+    `https://circuits.zkpassport.id/hashes/${vkeyHash.replace("0x", "")}.json.gz`,
+  )
   const circuit = await response.json()
   return circuit
 }
@@ -115,7 +117,7 @@ export async function getHostedPackagedCircuitByName(
   version: `v${number}.${number}.${number}`,
   name: string,
 ): Promise<PackagedCircuit> {
-  const response = await fetch(`https://circuits.zkpassport.id/${version}/${name}.json`)
+  const response = await fetch(`https://circuits.zkpassport.id/versions/${version}/${name}.json.gz`)
   const circuit = await response.json()
   return circuit
 }
