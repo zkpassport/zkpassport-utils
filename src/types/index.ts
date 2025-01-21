@@ -241,6 +241,8 @@ export type QueryResult = {
 export type ProofResult = {
   proof?: string
   vkeyHash?: string
+  version?: `${number}.${number}.${number}`
+  name?: string
 }
 
 export type Service = {
