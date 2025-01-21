@@ -103,6 +103,19 @@ export function getCommitmentInFromDisclosureProof(proofData: ProofData): bigint
   return BigInt(proofData.publicInputs[0])
 }
 
+export async function getHostedPackagedCircuitByNameAndHash(
+  name: string,
+  vkeyHash: string,
+): Promise<PackagedCircuit> {
+  const response = await fetch(
+    `https://circuits.zkpassport.id/artifacts/${name}_${vkeyHash
+      .replace("0x", "")
+      .substring(0, 16)}.json.gz`,
+  )
+  const circuit = await response.json()
+  return circuit
+}
+
 export async function getHostedPackagedCircuitByVkeyHash(
   vkeyHash: string,
 ): Promise<PackagedCircuit> {
@@ -114,7 +127,7 @@ export async function getHostedPackagedCircuitByVkeyHash(
 }
 
 export async function getHostedPackagedCircuitByName(
-  version: `v${number}.${number}.${number}`,
+  version: `${number}.${number}.${number}`,
   name: string,
 ): Promise<PackagedCircuit> {
   const response = await fetch(`https://circuits.zkpassport.id/versions/${version}/${name}.json.gz`)
@@ -130,3 +143,4 @@ export * from "./date"
 export * from "./integrity"
 export * from "./id-data"
 export * from "./dsc"
+export * from "./vkey"
