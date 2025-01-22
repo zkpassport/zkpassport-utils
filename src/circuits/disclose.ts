@@ -15,6 +15,33 @@ function stripChevrons(str: string): string {
   return str.replace(/^<+|<+$/g, "").replace(/</g, " ")
 }
 
+/**
+ * Get rid of the chevrons and replace them with spaces
+ * Also remove all other non roman characters and replace
+ * characters with diacritics with their base character
+ * @param name
+ */
+export function formatName(name: string): string {
+  return name
+    .replace(/<+/g, " ")
+    .replace(/</g, " ")
+    .replace(/[áàâäãå]/g, "a")
+    .replace(/[éèêë]/g, "e")
+    .replace(/[íìîï]/g, "i")
+    .replace(/[óòôöõ]/g, "o")
+    .replace(/[úùûü]/g, "u")
+    .replace(/[ñ]/g, "n")
+    .replace(/[ç]/g, "c")
+    .replace(/[æ]/g, "ae")
+    .replace(/[œ]/g, "oe")
+    .replace(/[ø]/g, "o")
+    .replace(/[æ]/g, "ae")
+    .replace(/[œ]/g, "oe")
+    .replace(/[ø]/g, "o")
+    .replace(/[^a-zA-Z ]/g, "")
+    .trim()
+}
+
 export class DisclosedData {
   readonly issuingCountry: string // 3-letter country code
   readonly nationality: string // 3-letter country code
@@ -23,6 +50,8 @@ export class DisclosedData {
   readonly dateOfExpiry: Date // Expiry date
   readonly dateOfBirth: Date // Birth date
   readonly name: string // Full name
+  readonly firstName: string // First name
+  readonly lastName: string // Last name
   readonly gender: string // Gender
 
   constructor(data: {
@@ -33,6 +62,8 @@ export class DisclosedData {
     dateOfExpiry: Date
     dateOfBirth: Date
     name: string
+    firstName: string
+    lastName: string
     gender: string
   }) {
     this.issuingCountry = data.issuingCountry
@@ -43,9 +74,11 @@ export class DisclosedData {
     this.dateOfBirth = data.dateOfBirth
     this.name = data.name
     this.gender = data.gender
+    this.firstName = data.firstName
+    this.lastName = data.lastName
   }
 
-  static fromProof(proof: ProofData): DisclosedData {
+  static fromFlagsProof(proof: ProofData): DisclosedData {
     const disclosedBytes = proof.publicInputs.slice(3, 93).map((hex) => parseInt(hex, 16))
 
     const raw: DisclosedDataRaw = {
@@ -62,6 +95,13 @@ export class DisclosedData {
     const decoder = new TextDecoder()
     const decode = (arr: Uint8Array) => decoder.decode(arr).replace(/\0/g, "")
 
+    const unformattedName = raw.name && raw.name.length > 0 ? decode(raw.name) : ""
+    const indexOfDoubleChevron = unformattedName.indexOf("<<")
+    const lastName =
+      indexOfDoubleChevron > 0 ? unformattedName.substring(0, indexOfDoubleChevron) : ""
+    const firstName =
+      indexOfDoubleChevron > 0 ? unformattedName.substring(indexOfDoubleChevron + 2) : ""
+
     return new DisclosedData({
       issuingCountry: decode(raw.issuingCountry),
       nationality: decode(raw.nationality),
@@ -69,7 +109,63 @@ export class DisclosedData {
       documentNumber: stripChevrons(decode(raw.documentNumber)),
       dateOfExpiry: parseDate(raw.dateOfExpiry),
       dateOfBirth: parseDate(raw.dateOfBirth),
-      name: stripChevrons(decode(raw.name)),
+      name: formatName(unformattedName),
+      firstName: formatName(firstName),
+      lastName: formatName(lastName),
+      gender: decode(raw.gender),
+    })
+  }
+
+  static fromBytesProof(proof: ProofData, idType: "passport" | "id_card"): DisclosedData {
+    const disclosedBytesStartIndex = 93
+    const disclosedBytesEndIndex = 182
+    const disclosedBytes = proof.publicInputs
+      .slice(disclosedBytesStartIndex, disclosedBytesEndIndex)
+      .map((hex) => parseInt(hex, 16))
+
+    const raw: DisclosedDataRaw = {
+      issuingCountry: new Uint8Array(disclosedBytes.slice(2, 5)),
+      nationality: new Uint8Array(
+        disclosedBytes.slice(idType === "id_card" ? 45 : 54, idType === "id_card" ? 48 : 57),
+      ),
+      documentType: new Uint8Array(disclosedBytes.slice(0, 2)),
+      documentNumber: new Uint8Array(
+        disclosedBytes.slice(idType === "id_card" ? 5 : 44, idType === "id_card" ? 14 : 53),
+      ),
+      dateOfExpiry: new Uint8Array(
+        disclosedBytes.slice(idType === "id_card" ? 38 : 65, idType === "id_card" ? 44 : 71),
+      ),
+      dateOfBirth: new Uint8Array(
+        disclosedBytes.slice(idType === "id_card" ? 30 : 57, idType === "id_card" ? 36 : 63),
+      ),
+      name: new Uint8Array(
+        disclosedBytes.slice(idType === "id_card" ? 60 : 5, idType === "id_card" ? 90 : 44),
+      ),
+      gender: new Uint8Array(
+        disclosedBytes.slice(idType === "id_card" ? 37 : 64, idType === "id_card" ? 38 : 65),
+      ),
+    }
+
+    const decoder = new TextDecoder()
+    const decode = (arr: Uint8Array) => decoder.decode(arr).replace(/\0/g, "")
+
+    const unformattedName = raw.name && raw.name.length > 0 ? decode(raw.name) : ""
+    const indexOfDoubleChevron = unformattedName.indexOf("<<")
+    const lastName =
+      indexOfDoubleChevron > 0 ? unformattedName.substring(0, indexOfDoubleChevron) : ""
+    const firstName =
+      indexOfDoubleChevron > 0 ? unformattedName.substring(indexOfDoubleChevron + 2) : ""
+
+    return new DisclosedData({
+      issuingCountry: decode(raw.issuingCountry),
+      nationality: decode(raw.nationality),
+      documentType: stripChevrons(decode(raw.documentType)),
+      documentNumber: stripChevrons(decode(raw.documentNumber)),
+      dateOfExpiry: parseDate(raw.dateOfExpiry),
+      dateOfBirth: parseDate(raw.dateOfBirth),
+      name: formatName(unformattedName),
+      firstName: formatName(firstName),
+      lastName: formatName(lastName),
       gender: decode(raw.gender),
     })
   }
