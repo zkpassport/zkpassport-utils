@@ -55,5 +55,9 @@ export function getProofData(proof: string) {
   const proofWithoutPublicInputs = getProofWithoutPublicInputs(proofAsFields)
   const proofBytes = Buffer.from(proofWithoutPublicInputs.join(""), "hex")
   const publicInputs = getPublicInputs(proofAsFields)
-  return { proof: proofBytes, publicInputs }
+  return {
+    proof: proofBytes,
+    // Make sure it's prefixed with 0x
+    publicInputs: publicInputs.map((input) => (input.startsWith("0x") ? input : `0x${input}`)),
+  }
 }
