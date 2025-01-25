@@ -80,9 +80,6 @@ export function isIDSupported(passport: PassportViewModel): boolean {
   return (
     isSignatureAlgorithmSupported(passport, sodSignatureAlgorithm) &&
     isSignatureAlgorithmSupported(passport, dscSignatureAlgorithm) &&
-    passport.sod.certificate.tbs.subjectPublicKeyInfo.signatureAlgorithm.name
-      .toLowerCase()
-      .includes("sha256") &&
     passport.sod.certificate.signatureAlgorithm.name.toLowerCase().includes("sha256") &&
     passport.sod.signerInfo.signatureAlgorithm.name.toLowerCase().includes("sha256") &&
     passport.sod.digestAlgorithms.every((digest) => digest === "SHA256") &&
