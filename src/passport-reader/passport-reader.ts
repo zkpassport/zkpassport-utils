@@ -6,7 +6,7 @@ import { p521 } from "@noble/curves/p521"
 import { ECParameters } from "@peculiar/asn1-ecc"
 import { RSAPublicKey } from "@peculiar/asn1-rsa"
 import { AsnParser } from "@peculiar/asn1-schema"
-import { TBSCertificate } from "@peculiar/asn1-x509"
+import { SubjectPublicKeyInfo, TBSCertificate } from "@peculiar/asn1-x509"
 import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "./constants"
 import { SOD } from "./sod"
 import { ASN } from "./asn"
@@ -170,31 +170,24 @@ export function getCurveName(ecParams: ECParameters): string {
   return `unknown curve`
 }
 
-export function getECDSAInfo(tbsCertificate: TBSCertificate): {
+export function getECDSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
   curve: string
   publicKey: Uint8Array
 } {
-  const parsedParams = AsnParser.parse(
-    tbsCertificate.subjectPublicKeyInfo.algorithm.parameters!,
-    ECParameters,
-  )
+  const parsedParams = AsnParser.parse(subjectPublicKeyInfo.algorithm.parameters!, ECParameters)
   return {
     curve: getCurveName(parsedParams),
-    publicKey: new Uint8Array(tbsCertificate!.subjectPublicKeyInfo.subjectPublicKey),
+    publicKey: new Uint8Array(subjectPublicKeyInfo.subjectPublicKey),
   }
 }
 
-export function getRSAInfo(tbsCertificate: TBSCertificate): {
+export function getRSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
   modulus: bigint
   exponent: bigint
   type: "pkcs" | "pss"
 } {
-  const parsedKey = AsnParser.parse(
-    tbsCertificate.subjectPublicKeyInfo.subjectPublicKey!,
-    RSAPublicKey,
-  )
-  const type =
-    RSA_OIDS[tbsCertificate.subjectPublicKeyInfo.algorithm.algorithm as keyof typeof RSA_OIDS] ?? ""
+  const parsedKey = AsnParser.parse(subjectPublicKeyInfo.subjectPublicKey!, RSAPublicKey)
+  const type = RSA_OIDS[subjectPublicKeyInfo.algorithm.algorithm as keyof typeof RSA_OIDS] ?? ""
   return {
     modulus: fromArrayBufferToBigInt(parsedKey.modulus),
     exponent: fromArrayBufferToBigInt(parsedKey.publicExponent),

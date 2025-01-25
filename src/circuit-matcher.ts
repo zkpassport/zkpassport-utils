@@ -58,10 +58,10 @@ export function isSignatureAlgorithmSupported(
     return false
   }
   if (signatureAlgorithm === "ECDSA") {
-    const ecdsaInfo = getECDSAInfo(tbsCertificate)
-    return ecdsaInfo.curve === "P-256"
+    const ecdsaInfo = getECDSAInfo(tbsCertificate.subjectPublicKeyInfo)
+    return !!ecdsaInfo.curve && ecdsaInfo.curve !== "unknown curve"
   } else if (signatureAlgorithm === "RSA") {
-    const rsaInfo = getRSAInfo(tbsCertificate)
+    const rsaInfo = getRSAInfo(tbsCertificate.subjectPublicKeyInfo)
     const modulusBits = getBitSize(rsaInfo.modulus)
     return (
       (modulusBits === 1024 ||
@@ -74,14 +74,21 @@ export function isSignatureAlgorithmSupported(
   return false
 }
 
-export function isDocumentSODSupported(passport: PassportViewModel): boolean {
-  const signatureAlgorithm = getSodSignatureAlgorithmType(passport)
-  return isSignatureAlgorithmSupported(passport, signatureAlgorithm)
-}
-
-export function isDocumentDSCSupported(passport: PassportViewModel): boolean {
-  const signatureAlgorithm = getDSCSignatureAlgorithmType(passport)
-  return isSignatureAlgorithmSupported(passport, signatureAlgorithm)
+export function isIDSupported(passport: PassportViewModel): boolean {
+  const sodSignatureAlgorithm = getSodSignatureAlgorithmType(passport)
+  const dscSignatureAlgorithm = getDSCSignatureAlgorithmType(passport)
+  return (
+    isSignatureAlgorithmSupported(passport, sodSignatureAlgorithm) &&
+    isSignatureAlgorithmSupported(passport, dscSignatureAlgorithm) &&
+    passport.sod.certificate.tbs.subjectPublicKeyInfo.signatureAlgorithm.name
+      .toLowerCase()
+      .includes("sha256") &&
+    passport.sod.certificate.signatureAlgorithm.name.toLowerCase().includes("sha256") &&
+    passport.sod.signerInfo.signatureAlgorithm.name.toLowerCase().includes("sha256") &&
+    passport.sod.digestAlgorithms.every((digest) => digest === "SHA256") &&
+    passport.sod.encapContentInfo.eContent.hashAlgorithm === "SHA256" &&
+    passport.sod.signerInfo.digestAlgorithm === "SHA256"
+  )
 }
 
 export function getCSCMasterlist(): CSCMasterlist {
@@ -169,7 +176,7 @@ function getDSCDataInputs(
     return null
   }
   if (signatureAlgorithm === "ECDSA") {
-    const ecdsaInfo = getECDSAInfo(tbsCertificate)
+    const ecdsaInfo = getECDSAInfo(tbsCertificate.subjectPublicKeyInfo)
     // The first byte is 0x04, which is the ASN.1 sequence tag for a SEQUENCE of two integers
     // So we skip the first byte
     const dscPubkeyX = Array.from(
@@ -185,7 +192,7 @@ function getDSCDataInputs(
       dsc_pubkey_y: dscPubkeyY,
     }
   } else {
-    const { modulus, exponent } = getRSAInfo(tbsCertificate)
+    const { modulus, exponent } = getRSAInfo(tbsCertificate.subjectPublicKeyInfo)
     const modulusBytes = bigintToBytes(modulus)
     return {
       dsc_pubkey: modulusBytes,
