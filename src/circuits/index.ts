@@ -135,7 +135,7 @@ export async function getHostedPackagedCircuitByName(
   return circuit
 }
 
-export { DisclosedData, createDisclosedDataRaw, formatName } from "./disclose"
+export { DisclosedData, createDisclosedDataRaw, formatName, parseDocumentType } from "./disclose"
 
 export * from "./country"
 export * from "./age"

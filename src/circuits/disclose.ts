@@ -42,6 +42,18 @@ export function formatName(name: string): string {
     .trim()
 }
 
+export function parseDocumentType(documentType: string): string {
+  if (documentType.startsWith("P")) {
+    return "passport"
+  } else if (documentType === "IR" || documentType === "AR") {
+    return "residence_permit"
+  } else if (documentType.startsWith("I")) {
+    return "id_card"
+  } else {
+    return "other"
+  }
+}
+
 export class DisclosedData {
   readonly issuingCountry: string // 3-letter country code
   readonly nationality: string // 3-letter country code
@@ -105,7 +117,7 @@ export class DisclosedData {
     return new DisclosedData({
       issuingCountry: decode(raw.issuingCountry),
       nationality: decode(raw.nationality),
-      documentType: stripChevrons(decode(raw.documentType)),
+      documentType: parseDocumentType(decode(raw.documentType)),
       documentNumber: stripChevrons(decode(raw.documentNumber)),
       dateOfExpiry: parseDate(raw.dateOfExpiry),
       dateOfBirth: parseDate(raw.dateOfBirth),
@@ -159,7 +171,7 @@ export class DisclosedData {
     return new DisclosedData({
       issuingCountry: decode(raw.issuingCountry),
       nationality: decode(raw.nationality),
-      documentType: stripChevrons(decode(raw.documentType)),
+      documentType: parseDocumentType(decode(raw.documentType)),
       documentNumber: stripChevrons(decode(raw.documentNumber)),
       dateOfExpiry: parseDate(raw.dateOfExpiry),
       dateOfBirth: parseDate(raw.dateOfBirth),

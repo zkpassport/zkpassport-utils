@@ -303,7 +303,7 @@ export async function getDSCCircuitInputs(
     certificate_registry_id: CERTIFICATE_REGISTRY_ID,
     certificate_type: 1,
     country: csc.country,
-    salt: salt.toString(),
+    salt: `0x${salt.toString(16)}`,
   }
 
   const signatureAlgorithm = getDSCSignatureAlgorithmType(passport)
@@ -359,7 +359,7 @@ export async function getIDDataCircuitInputs(
     signed_attributes: idData.signed_attributes,
     signed_attributes_size: idData.signed_attributes_size,
     comm_in: commIn.toHex(),
-    salt: salt.toString(),
+    salt: `0x${salt.toString(16)}`,
   }
 
   const signatureAlgorithm = getSodSignatureAlgorithmType(passport)
@@ -428,7 +428,7 @@ export async function getIntegrityCheckCircuitInputs(
     dg1_offset_in_e_content: idData.dg1_offset_in_e_content,
     comm_in: comm_in.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    salt: salt.toString(),
+    salt: `0x${salt.toString(16)}`,
   }
 }
 
@@ -560,9 +560,9 @@ export async function getDiscloseCircuitInputs(
     disclose_mask: discloseMask,
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    service_scope: service_scope.toString(),
-    service_subscope: service_subscope.toString(),
-    salt: salt.toString(),
+    service_scope: `0x${service_scope.toString(16)}`,
+    service_subscope: `0x${service_subscope.toString(16)}`,
+    salt: `0x${salt.toString(16)}`,
   }
 }
 
@@ -601,9 +601,9 @@ export async function getDiscloseFlagsCircuitInputs(
     disclose_flags: discloseFlags,
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    service_scope: service_scope.toString(),
-    service_subscope: service_subscope.toString(),
-    salt: salt.toString(),
+    service_scope: `0x${service_scope.toString(16)}`,
+    service_subscope: `0x${service_subscope.toString(16)}`,
+    salt: `0x${salt.toString(16)}`,
   }
 }
 
@@ -672,9 +672,9 @@ export async function getAgeCircuitInputs(
     current_date: format(new Date(), "yyyyMMdd"),
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    service_scope: service_scope.toString(),
-    service_subscope: service_subscope.toString(),
-    salt: salt.toString(),
+    service_scope: `0x${service_scope.toString(16)}`,
+    service_subscope: `0x${service_subscope.toString(16)}`,
+    salt: `0x${salt.toString(16)}`,
     min_age_required: minAge,
     max_age_required: maxAge,
   }
@@ -712,9 +712,9 @@ export async function getCountryInclusionCircuitInputs(
     country_list: padCountryList(query.nationality?.in ?? []),
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    service_scope: service_scope.toString(),
-    service_subscope: service_subscope.toString(),
-    salt: salt.toString(),
+    service_scope: `0x${service_scope.toString(16)}`,
+    service_subscope: `0x${service_subscope.toString(16)}`,
+    salt: `0x${salt.toString(16)}`,
   }
 }
 
@@ -752,9 +752,9 @@ export async function getCountryExclusionCircuitInputs(
     ),
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    service_scope: service_scope.toString(),
-    service_subscope: service_subscope.toString(),
-    salt: salt.toString(),
+    service_scope: `0x${service_scope.toString(16)}`,
+    service_subscope: `0x${service_subscope.toString(16)}`,
+    salt: `0x${salt.toString(16)}`,
   }
 }
 
@@ -807,9 +807,9 @@ export async function getBirthdateCircuitInputs(
     current_date: format(new Date(), "yyyyMMdd"),
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    service_scope: service_scope.toString(),
-    service_subscope: service_subscope.toString(),
-    salt: salt.toString(),
+    service_scope: `0x${service_scope.toString(16)}`,
+    service_subscope: `0x${service_subscope.toString(16)}`,
+    salt: `0x${salt.toString(16)}`,
     // "11111111" means the date is ignored
     min_date: minDate ? format(minDate, "yyyyMMdd") : "1".repeat(8),
     max_date: maxDate ? format(maxDate, "yyyyMMdd") : "1".repeat(8),
@@ -865,9 +865,9 @@ export async function getExpiryDateCircuitInputs(
     current_date: format(new Date(), "yyyyMMdd"),
     comm_in: commIn.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    service_scope: service_scope.toString(),
-    service_subscope: service_subscope.toString(),
-    salt: salt.toString(),
+    service_scope: `0x${service_scope.toString(16)}`,
+    service_subscope: `0x${service_subscope.toString(16)}`,
+    salt: `0x${salt.toString(16)}`,
     // "11111111" means the date is ignored
     min_date: minDate ? format(minDate, "yyyyMMdd") : "1".repeat(8),
     max_date: maxDate ? format(maxDate, "yyyyMMdd") : "1".repeat(8),
