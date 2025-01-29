@@ -23,7 +23,7 @@ import { AsnParser } from "@peculiar/asn1-schema"
 import { AuthorityKeyIdentifier, PrivateKeyUsagePeriod } from "@peculiar/asn1-x509"
 import { format } from "date-fns"
 import { redcLimbsFromBytes } from "./barrett-reduction"
-import { Binary } from "./binary"
+import { Binary, HexString } from "./binary"
 import {
   calculatePrivateNullifier,
   getCertificateLeafHash,
@@ -42,12 +42,14 @@ import {
 import {
   bigintToBytes,
   bigintToNumber,
+  fromBytesToBigInt,
   getBitSize,
   getOffsetInArray,
   padArrayWithZeros,
 } from "./utils"
 import { parseDate } from "./circuits/disclose"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
+import { sha256 } from "@noble/hashes/sha256"
 
 export function isSignatureAlgorithmSupported(
   passport: PassportViewModel,
@@ -274,11 +276,23 @@ export function getBitSizeFromCurve(curve: string): number {
   return Number(curveName.replace("p", ""))
 }
 
+export function getScopeHash(value?: string): bigint {
+  if (!value) {
+    return 0n
+  }
+  // Hash the value using SHA256 and truncate to 31 bytes (248 bits)
+  const sha2Hash = sha256(value).slice(0, 31)
+  // Convert the hash to a bigint
+  const bytes = fromBytesToBigInt(Array.from(sha2Hash))
+  return bytes
+}
+
 export async function getDSCCircuitInputs(
   passport: PassportViewModel,
   salt: bigint,
   merkleTreeLeaves?: Binary[],
   masterlist?: CSCMasterlist,
+  merkleProof?: { root: string | HexString; index: number; path: (string | HexString)[] },
 ): Promise<any> {
   // Get the CSC for this passport's DSC
   const csc = getCSCForPassport(passport, masterlist)
@@ -295,11 +309,12 @@ export async function getDSCCircuitInputs(
       }),
     ))
   const index = cscMasterlist.certificates.findIndex((cert) => cert === csc)
-  const merkleProof = await computeMerkleProof(leaves, index, CERTIFICATE_REGISTRY_HEIGHT)
+  const finalMerkleProof =
+    merkleProof ?? (await computeMerkleProof(leaves, index, CERTIFICATE_REGISTRY_HEIGHT))
   const inputs = {
-    certificate_registry_root: merkleProof.root,
-    certificate_registry_index: merkleProof.index,
-    certificate_registry_hash_path: merkleProof.path,
+    certificate_registry_root: finalMerkleProof.root,
+    certificate_registry_index: finalMerkleProof.index,
+    certificate_registry_hash_path: finalMerkleProof.path,
     certificate_registry_id: CERTIFICATE_REGISTRY_ID,
     certificate_type: 1,
     country: csc.country,
