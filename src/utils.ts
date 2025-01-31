@@ -1,8 +1,8 @@
 export async function loadModule(module: string) {
   try {
-    return require(module);
+    return require(module)
   } catch {
-    return undefined;
+    return undefined
   }
 }
 
@@ -111,8 +111,14 @@ export function fromArrayBufferToBigInt(buffer: ArrayBuffer): bigint {
   return BigInt("0x" + Buffer.from(buffer).toString("hex"))
 }
 
-export function padArrayWithZeros(array: number[], length: number): number[] {
+export function rightPadArrayWithZeros(array: number[], length: number): number[] {
   return array.concat(Array(length - array.length).fill(0))
+}
+
+export function leftPadArrayWithZeros(array: number[], length: number): number[] {
+  return Array(length - array.length)
+    .fill(0)
+    .concat(array)
 }
 
 export function getBitSize(number: number | string | bigint): number {

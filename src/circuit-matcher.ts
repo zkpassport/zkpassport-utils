@@ -45,7 +45,8 @@ import {
   fromBytesToBigInt,
   getBitSize,
   getOffsetInArray,
-  padArrayWithZeros,
+  leftPadArrayWithZeros,
+  rightPadArrayWithZeros,
 } from "./utils"
 import { parseDate } from "./circuits/disclose"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
@@ -185,7 +186,7 @@ function getDSCDataInputs(
       ecdsaInfo.publicKey.slice((ecdsaInfo.publicKey.length - 1) / 2 + 1),
     )
     return {
-      tbs_certificate: padArrayWithZeros(passport?.tbsCertificate ?? [], maxTbsLength),
+      tbs_certificate: rightPadArrayWithZeros(passport?.tbsCertificate ?? [], maxTbsLength),
       pubkey_offset_in_tbs: getOffsetInArray(passport?.tbsCertificate ?? [], dscPubkeyX),
       dsc_pubkey_x: dscPubkeyX,
       dsc_pubkey_y: dscPubkeyY,
@@ -197,7 +198,7 @@ function getDSCDataInputs(
       dsc_pubkey: modulusBytes,
       exponent: bigintToNumber(exponent),
       dsc_pubkey_redc_param: redcLimbsFromBytes(modulusBytes),
-      tbs_certificate: padArrayWithZeros(passport?.tbsCertificate ?? [], maxTbsLength),
+      tbs_certificate: rightPadArrayWithZeros(passport?.tbsCertificate ?? [], maxTbsLength),
       pubkey_offset_in_tbs: getOffsetInArray(passport?.tbsCertificate ?? [], modulusBytes),
     }
   }
@@ -208,14 +209,14 @@ function getIDDataInputs(passport: PassportViewModel): IDDataInputs {
   const dg1Offset = getOffsetInArray(passport?.eContent ?? [], dg1?.hash ?? [])
   const id_data = {
     // Padded with 0s to make it 700 bytes
-    e_content: padArrayWithZeros(passport?.eContent ?? [], 700),
+    e_content: rightPadArrayWithZeros(passport?.eContent ?? [], 700),
     e_content_size: passport?.eContent?.length ?? 0,
     dg1_offset_in_e_content: dg1Offset,
     // Padded to 200 bytes with 0s
-    signed_attributes: padArrayWithZeros(passport?.signedAttributes ?? [], 200),
+    signed_attributes: rightPadArrayWithZeros(passport?.signedAttributes ?? [], 200),
     signed_attributes_size: passport?.signedAttributes?.length ?? 0,
     // Padded to 95 bytes with 0s
-    dg1: padArrayWithZeros(dg1?.value ?? [], 95),
+    dg1: rightPadArrayWithZeros(dg1?.value ?? [], 95),
   }
   return id_data
 }
@@ -262,8 +263,8 @@ export function processECDSASignature(signature: number[], byteSize: number): nu
     }
   }
   // Pad r and s to the expected byte size
-  r = padArrayWithZeros(r, byteSize)
-  s = padArrayWithZeros(s, byteSize)
+  r = leftPadArrayWithZeros(r, byteSize)
+  s = leftPadArrayWithZeros(s, byteSize)
   return [...r, ...s]
 }
 
@@ -335,7 +336,7 @@ export async function getDSCCircuitInputs(
       csc_pubkey_x: Array.from(publicKeyXBytes),
       csc_pubkey_y: Array.from(publicKeyYBytes),
       dsc_signature: dscSignature,
-      tbs_certificate: padArrayWithZeros(passport?.tbsCertificate ?? [], maxTbsLength),
+      tbs_certificate: rightPadArrayWithZeros(passport?.tbsCertificate ?? [], maxTbsLength),
       tbs_certificate_len: passport?.tbsCertificate?.length,
     }
   } else if (signatureAlgorithm === "RSA") {
@@ -343,7 +344,7 @@ export async function getDSCCircuitInputs(
     const modulusBytes = bigintToBytes(BigInt(cscPublicKey.modulus))
     return {
       ...inputs,
-      tbs_certificate: padArrayWithZeros(passport?.tbsCertificate ?? [], maxTbsLength),
+      tbs_certificate: rightPadArrayWithZeros(passport?.tbsCertificate ?? [], maxTbsLength),
       tbs_certificate_len: passport?.tbsCertificate?.length,
       dsc_signature: passport?.dscSignature ?? [],
       csc_pubkey: modulusBytes,
@@ -761,7 +762,7 @@ export async function getCountryExclusionCircuitInputs(
   return {
     dg1: idData.dg1,
     // Sort the country list in ascending order
-    country_list: padArrayWithZeros(
+    country_list: rightPadArrayWithZeros(
       countryList.sort((a, b) => a - b),
       200,
     ),
