@@ -77,14 +77,34 @@ export function isSignatureAlgorithmSupported(
   return false
 }
 
+export function isCSCSupported(csc: Certificate): boolean {
+  if (csc.signature_algorithm.toLowerCase().includes("rsa")) {
+    return (
+      (csc.key_size === 1024 ||
+        csc.key_size === 2048 ||
+        csc.key_size === 3072 ||
+        csc.key_size === 4096) &&
+      ((csc.public_key as RSACSCPublicKey).exponent === 3 ||
+        (csc.public_key as RSACSCPublicKey).exponent === 65537)
+    )
+  }
+  return (
+    csc.signature_algorithm.toLowerCase().includes("sha256") ||
+    // PSS is assumed to be always sha256
+    csc.signature_algorithm.toLowerCase().includes("pss")
+  )
+}
+
 export function isIDSupported(passport: PassportViewModel): boolean {
   const sodSignatureAlgorithm = getSodSignatureAlgorithmType(passport)
   const dscSignatureAlgorithm = getDSCSignatureAlgorithmType(passport)
   return (
     isSignatureAlgorithmSupported(passport, sodSignatureAlgorithm) &&
     isSignatureAlgorithmSupported(passport, dscSignatureAlgorithm) &&
-    passport.sod.certificate.signatureAlgorithm.name.toLowerCase().includes("sha256") &&
-    passport.sod.signerInfo.signatureAlgorithm.name.toLowerCase().includes("sha256") &&
+    (passport.sod.certificate.signatureAlgorithm.name.toLowerCase().includes("sha256") ||
+      passport.sod.certificate.signatureAlgorithm.name.toLowerCase().includes("pss")) &&
+    (passport.sod.signerInfo.signatureAlgorithm.name.toLowerCase().includes("sha256") ||
+      passport.sod.signerInfo.signatureAlgorithm.name.toLowerCase().includes("pss")) &&
     passport.sod.digestAlgorithms.every((digest) => digest === "SHA256") &&
     passport.sod.encapContentInfo.eContent.hashAlgorithm === "SHA256" &&
     passport.sod.signerInfo.digestAlgorithm === "SHA256"
