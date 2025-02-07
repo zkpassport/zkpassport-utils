@@ -1,6 +1,6 @@
 import { CERTIFICATE_REGISTRY_ID, CERT_TYPE_CSC } from "../constants"
 import { Binary } from "../binary"
-import { hashToFieldAsyncBN254 as hashToField } from "@zkpassport/poseidon2"
+import { poseidon2HashAsync } from "@zkpassport/poseidon2"
 import { Certificate, ECDSACSCPublicKey, PackagedCircuit, RSACSCPublicKey } from "../types"
 
 export interface ProofData {
@@ -10,7 +10,7 @@ export interface ProofData {
 
 export async function calculatePrivateNullifier(dg1: Binary, sodSig: Binary): Promise<Binary> {
   return Binary.from(
-    await hashToField([
+    await poseidon2HashAsync([
       ...Array.from(dg1).map((x) => BigInt(x)),
       ...Array.from(sodSig).map((x) => BigInt(x)),
     ]),
@@ -27,7 +27,7 @@ export async function hashSaltCountryTbs(
   result.push(salt)
   result.push(...country.split("").map((x) => BigInt(x.charCodeAt(0))))
   result.push(...Array.from(tbs.padEnd(maxTbsLength)).map((x) => BigInt(x)))
-  return Binary.from(await hashToField(result.map((x) => BigInt(x))))
+  return Binary.from(await poseidon2HashAsync(result.map((x) => BigInt(x))))
 }
 
 export async function hashSaltCountrySignedAttrDg1PrivateNullifier(
@@ -45,7 +45,7 @@ export async function hashSaltCountrySignedAttrDg1PrivateNullifier(
   result.push(signedAttrSize)
   result.push(...Array.from(dg1).map((x) => BigInt(x)))
   result.push(privateNullifier)
-  return Binary.from(await hashToField(result.map((x) => BigInt(x))))
+  return Binary.from(await poseidon2HashAsync(result.map((x) => BigInt(x))))
 }
 
 export async function hashSaltDg1PrivateNullifier(
@@ -57,7 +57,7 @@ export async function hashSaltDg1PrivateNullifier(
   result.push(salt)
   result.push(...Array.from(dg1).map((x) => BigInt(x)))
   result.push(privateNullifier)
-  return Binary.from(await hashToField(result.map((x) => BigInt(x))))
+  return Binary.from(await poseidon2HashAsync(result.map((x) => BigInt(x))))
 }
 
 export async function getCertificateLeafHash(
@@ -78,7 +78,7 @@ export async function getCertificateLeafHash(
     throw new Error("Unsupported signature algorithm")
   }
   return Binary.from(
-    await hashToField([
+    await poseidon2HashAsync([
       BigInt(registryId),
       BigInt(certType),
       ...Array.from(cert.country).map((char: string) => BigInt(char.charCodeAt(0))),
