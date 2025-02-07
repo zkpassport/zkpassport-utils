@@ -1,9 +1,9 @@
 import { Binary } from "../binary"
-import { hashToFieldAsyncBN254 as poseidon2HashToFieldAsync } from "@zkpassport/poseidon2"
+import { poseidon2HashAsync } from "@zkpassport/poseidon2"
 import { AsyncIMT } from "./async-imt"
 
 async function poseidon2(values: any[]) {
-  return poseidon2HashToFieldAsync(values.map((v) => BigInt(v)))
+  return poseidon2HashAsync(values.map((v) => BigInt(v)))
 }
 
 export async function computeMerkleProof(leaves: Binary[], index: number, height: number) {
