@@ -724,7 +724,7 @@ function padCountryList(countryList: string[]): string[] {
   return paddedCountryList
 }
 
-export async function getCountryInclusionCircuitInputs(
+export async function getNationalityInclusionCircuitInputs(
   passport: PassportViewModel,
   query: Query,
   salt: bigint,
@@ -754,7 +754,37 @@ export async function getCountryInclusionCircuitInputs(
   }
 }
 
-export async function getCountryExclusionCircuitInputs(
+export async function getIssuingCountryInclusionCircuitInputs(
+  passport: PassportViewModel,
+  query: Query,
+  salt: bigint,
+  service_scope: bigint = 0n,
+  service_subscope: bigint = 0n,
+): Promise<any> {
+  const idData = getIDDataInputs(passport)
+  if (!idData) return null
+  const privateNullifier = await calculatePrivateNullifier(
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    Binary.from(passport.sodSignature),
+  )
+  const commIn = await hashSaltDg1PrivateNullifier(
+    salt,
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    privateNullifier.toBigInt(),
+  )
+
+  return {
+    dg1: idData.dg1,
+    country_list: padCountryList(query.issuing_country?.in ?? []),
+    comm_in: commIn.toHex(),
+    private_nullifier: privateNullifier.toHex(),
+    service_scope: `0x${service_scope.toString(16)}`,
+    service_subscope: `0x${service_subscope.toString(16)}`,
+    salt: `0x${salt.toString(16)}`,
+  }
+}
+
+export async function getNationalityExclusionCircuitInputs(
   passport: PassportViewModel,
   query: Query,
   salt: bigint,
@@ -776,6 +806,46 @@ export async function getCountryExclusionCircuitInputs(
   const countryList: number[] = []
   for (let i = 0; i < (query.nationality?.out ?? []).length; i++) {
     const country: string = (query.nationality?.out ?? [])[i]
+    countryList.push(...getCountryWeightedSum(country as Alpha3Code))
+  }
+
+  return {
+    dg1: idData.dg1,
+    // Sort the country list in ascending order
+    country_list: rightPadArrayWithZeros(
+      countryList.sort((a, b) => a - b),
+      200,
+    ),
+    comm_in: commIn.toHex(),
+    private_nullifier: privateNullifier.toHex(),
+    service_scope: `0x${service_scope.toString(16)}`,
+    service_subscope: `0x${service_subscope.toString(16)}`,
+    salt: `0x${salt.toString(16)}`,
+  }
+}
+
+export async function getIssuingCountryExclusionCircuitInputs(
+  passport: PassportViewModel,
+  query: Query,
+  salt: bigint,
+  service_scope: bigint = 0n,
+  service_subscope: bigint = 0n,
+): Promise<any> {
+  const idData = getIDDataInputs(passport)
+  if (!idData) return null
+  const privateNullifier = await calculatePrivateNullifier(
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    Binary.from(passport.sodSignature),
+  )
+  const commIn = await hashSaltDg1PrivateNullifier(
+    salt,
+    Binary.from(idData.dg1).padEnd(DG1_INPUT_SIZE),
+    privateNullifier.toBigInt(),
+  )
+
+  const countryList: number[] = []
+  for (let i = 0; i < (query.issuing_country?.out ?? []).length; i++) {
+    const country: string = (query.issuing_country?.out ?? [])[i]
     countryList.push(...getCountryWeightedSum(country as Alpha3Code))
   }
 
