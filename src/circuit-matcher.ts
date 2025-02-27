@@ -304,6 +304,8 @@ export function getBitSizeFromCurve(curve: string): number {
     .replace("brainpoolP", "")
     .replace("nist", "")
     .replace("-", "")
+    .replace("r1", "")
+    .replace("t1", "")
     .toLowerCase()
   return Number(curveName.replace("p", ""))
 }

@@ -11,6 +11,8 @@ import { p384 } from "@noble/curves/p384"
 import { p521 } from "@noble/curves/p521"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
 import { Certificate, SignatureAlgorithm } from "./types"
+import { getECDSAInfo, getRSAInfo, getRSAPSSParams } from "./passport-reader"
+import { getBitSizeFromCurve } from "./circuit-matcher"
 
 const OIDS_TO_DESCRIPTION: Record<string, string> = {
   "1.2.840.113549.1.1.1": "rsaEncryption",
@@ -179,42 +181,6 @@ export function getCurveName(ecParams: ECParameters): string {
   return `unknown curve`
 }
 
-export function getECDSAInfo(tbsCertificate: TBSCertificate): {
-  curve: string
-  publicKey: Uint8Array
-} {
-  const parsedParams = AsnParser.parse(
-    tbsCertificate.subjectPublicKeyInfo.algorithm.parameters!,
-    ECParameters,
-  )
-  return {
-    curve: getCurveName(parsedParams),
-    publicKey: new Uint8Array(tbsCertificate!.subjectPublicKeyInfo.subjectPublicKey),
-  }
-}
-
-export function getRSAInfo(tbsCertificate: TBSCertificate): {
-  modulus: bigint
-  exponent: bigint
-} {
-  try {
-    const parsedKey = AsnParser.parse(
-      tbsCertificate.subjectPublicKeyInfo.subjectPublicKey!,
-      RSAPublicKey,
-    )
-    return {
-      modulus: BigInt(`0x${Buffer.from(parsedKey.modulus).toString("hex")}`),
-      exponent: BigInt(`0x${Buffer.from(parsedKey.publicExponent).toString("hex")}`),
-    }
-  } catch (e) {
-    console.error("Error parsing RSA key:", e)
-    return {
-      modulus: BigInt(0),
-      exponent: BigInt(0),
-    }
-  }
-}
-
 export function parseCertificate(content: Buffer | string): Certificate {
   if (typeof content === "string") {
     // Remove PEM headers and convert to binary
@@ -270,13 +236,16 @@ export function parseCertificate(content: Buffer | string): Certificate {
     ] ?? x509.tbsCertificate.subjectPublicKeyInfo.algorithm.algorithm
 
   if (publicKeyType === "rsaEncryption") {
-    const rsaInfo = getRSAInfo(x509.tbsCertificate)
+    const rsaInfo = getRSAInfo(x509.tbsCertificate.subjectPublicKeyInfo)
     return {
       signature_algorithm: signatureAlgorithm as SignatureAlgorithm,
       public_key: {
         type: publicKeyType,
         modulus: `0x${rsaInfo.modulus.toString(16)}`,
         exponent: Number(rsaInfo.exponent),
+        hash_algorithm: signatureAlgorithm.includes("pss")
+          ? getRSAPSSParams(x509.signatureAlgorithm).hashAlgorithm
+          : undefined,
         scheme: signatureAlgorithm.includes("pss") ? "pss" : "pkcs",
       },
       country: countryCode as Alpha3Code,
@@ -290,7 +259,7 @@ export function parseCertificate(content: Buffer | string): Certificate {
       private_key_usage_period: getPrivateKeyUsagePeriod(x509),
     }
   } else if (publicKeyType === "ecPublicKey") {
-    const ecdsaInfo = getECDSAInfo(x509.tbsCertificate)
+    const ecdsaInfo = getECDSAInfo(x509.tbsCertificate.subjectPublicKeyInfo)
     return {
       signature_algorithm: signatureAlgorithm as SignatureAlgorithm,
       public_key: {
@@ -310,7 +279,7 @@ export function parseCertificate(content: Buffer | string): Certificate {
         not_before: notBefore,
         not_after: notAfter,
       },
-      key_size: ((ecdsaInfo.publicKey.length - 1) / 2) * 8,
+      key_size: getBitSizeFromCurve(ecdsaInfo.curve),
       authority_key_identifier: getAuthorityKeyId(x509),
       subject_key_identifier: getSubjectKeyId(x509),
       private_key_usage_period: getPrivateKeyUsagePeriod(x509),

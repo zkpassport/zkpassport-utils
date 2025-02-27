@@ -1,6 +1,7 @@
 import type { Alpha3Code } from "i18n-iso-countries"
 import type { SOD } from "../passport-reader"
 import type { CountryName } from "./countries"
+import { DigestAlgorithm } from "@/passport-reader/sod"
 
 export type SavedPassport = {
   id: string
@@ -364,6 +365,7 @@ export type RSACSCPublicKey = {
   modulus: string
   exponent: number
   scheme: "pkcs" | "pss"
+  hash_algorithm?: DigestAlgorithm
 }
 
 export type Certificate = {

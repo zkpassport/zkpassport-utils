@@ -6,7 +6,7 @@ import { p521 } from "@noble/curves/p521"
 import { ECParameters } from "@peculiar/asn1-ecc"
 import { RSAPublicKey, RsaSaPssParams } from "@peculiar/asn1-rsa"
 import { AsnParser } from "@peculiar/asn1-schema"
-import { SubjectPublicKeyInfo, TBSCertificate } from "@peculiar/asn1-x509"
+import { AlgorithmIdentifier, SubjectPublicKeyInfo, TBSCertificate } from "@peculiar/asn1-x509"
 import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "./constants"
 import { DigestAlgorithm, SOD } from "./sod"
 import { ASN } from "./asn"
@@ -181,12 +181,12 @@ export function getECDSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
   }
 }
 
-export function getRSAPSSParams(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
+export function getRSAPSSParams(signatureAlgorithm: AlgorithmIdentifier): {
   hashAlgorithm: DigestAlgorithm
   saltLength: number
   maskGenAlgorithm: string
 } {
-  const parsedKey = AsnParser.parse(subjectPublicKeyInfo.algorithm.parameters!, RsaSaPssParams)
+  const parsedKey = AsnParser.parse(signatureAlgorithm.parameters!, RsaSaPssParams)
   const hashAlgorithm = HASH_OIDS[parsedKey.hashAlgorithm.algorithm as keyof typeof HASH_OIDS] ?? ""
   const maskGenAlgorithm =
     HASH_OIDS[parsedKey.maskGenAlgorithm.algorithm as keyof typeof HASH_OIDS] ?? ""
@@ -200,7 +200,6 @@ export function getRSAPSSParams(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
 export function getRSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
   modulus: bigint
   exponent: bigint
-  hashAlgorithm?: DigestAlgorithm
   type: "pkcs" | "pss"
 } {
   const parsedKey = AsnParser.parse(subjectPublicKeyInfo.subjectPublicKey!, RSAPublicKey)
@@ -208,9 +207,6 @@ export function getRSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
   return {
     modulus: fromArrayBufferToBigInt(parsedKey.modulus),
     exponent: fromArrayBufferToBigInt(parsedKey.publicExponent),
-    hashAlgorithm: type.includes("pss")
-      ? getRSAPSSParams(subjectPublicKeyInfo).hashAlgorithm
-      : undefined,
     type: type.includes("pss") ? "pss" : "pkcs",
   }
 }
