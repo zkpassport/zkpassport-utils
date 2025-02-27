@@ -4,11 +4,11 @@ import { p256 } from "@noble/curves/p256"
 import { p384 } from "@noble/curves/p384"
 import { p521 } from "@noble/curves/p521"
 import { ECParameters } from "@peculiar/asn1-ecc"
-import { RSAPublicKey } from "@peculiar/asn1-rsa"
+import { RSAPublicKey, RsaSaPssParams } from "@peculiar/asn1-rsa"
 import { AsnParser } from "@peculiar/asn1-schema"
 import { SubjectPublicKeyInfo, TBSCertificate } from "@peculiar/asn1-x509"
 import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "./constants"
-import { SOD } from "./sod"
+import { DigestAlgorithm, SOD } from "./sod"
 import { ASN } from "./asn"
 import { decodeOID } from "./oids"
 
@@ -181,9 +181,26 @@ export function getECDSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
   }
 }
 
+export function getRSAPSSParams(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
+  hashAlgorithm: DigestAlgorithm
+  saltLength: number
+  maskGenAlgorithm: string
+} {
+  const parsedKey = AsnParser.parse(subjectPublicKeyInfo.algorithm.parameters!, RsaSaPssParams)
+  const hashAlgorithm = HASH_OIDS[parsedKey.hashAlgorithm.algorithm as keyof typeof HASH_OIDS] ?? ""
+  const maskGenAlgorithm =
+    HASH_OIDS[parsedKey.maskGenAlgorithm.algorithm as keyof typeof HASH_OIDS] ?? ""
+  return {
+    hashAlgorithm: hashAlgorithm.replace("SHA-", "SHA") as DigestAlgorithm,
+    saltLength: parsedKey.saltLength,
+    maskGenAlgorithm,
+  }
+}
+
 export function getRSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
   modulus: bigint
   exponent: bigint
+  hashAlgorithm?: DigestAlgorithm
   type: "pkcs" | "pss"
 } {
   const parsedKey = AsnParser.parse(subjectPublicKeyInfo.subjectPublicKey!, RSAPublicKey)
@@ -191,6 +208,9 @@ export function getRSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
   return {
     modulus: fromArrayBufferToBigInt(parsedKey.modulus),
     exponent: fromArrayBufferToBigInt(parsedKey.publicExponent),
+    hashAlgorithm: type.includes("pss")
+      ? getRSAPSSParams(subjectPublicKeyInfo).hashAlgorithm
+      : undefined,
     type: type.includes("pss") ? "pss" : "pkcs",
   }
 }
@@ -213,6 +233,18 @@ export function getSodSignatureAlgorithmType(passport: PassportViewModel): "RSA"
   return ""
 }
 
+export function getSodSignatureHashAlgorithm(
+  passport: PassportViewModel,
+): DigestAlgorithm | undefined {
+  if (passport.sodSignatureAlgorithm?.toLowerCase().includes("sha256")) {
+    return "SHA256"
+  } else if (passport.sodSignatureAlgorithm?.toLowerCase().includes("sha384")) {
+    return "SHA384"
+  } else if (passport.sodSignatureAlgorithm?.toLowerCase().includes("sha512")) {
+    return "SHA512"
+  }
+}
+
 export function getDSCSignatureAlgorithmType(passport: PassportViewModel): "RSA" | "ECDSA" | "" {
   if (passport.dscSignatureAlgorithm?.toLowerCase().includes("rsa")) {
     return "RSA"
@@ -220,4 +252,16 @@ export function getDSCSignatureAlgorithmType(passport: PassportViewModel): "RSA"
     return "ECDSA"
   }
   return ""
+}
+
+export function getDSCSignatureHashAlgorithm(
+  passport: PassportViewModel,
+): DigestAlgorithm | undefined {
+  if (passport.dscSignatureAlgorithm?.toLowerCase().includes("sha256")) {
+    return "SHA256"
+  } else if (passport.dscSignatureAlgorithm?.toLowerCase().includes("sha384")) {
+    return "SHA384"
+  } else if (passport.dscSignatureAlgorithm?.toLowerCase().includes("sha512")) {
+    return "SHA512"
+  }
 }

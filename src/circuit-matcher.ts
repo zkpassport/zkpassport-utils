@@ -51,6 +51,9 @@ import {
 import { parseDate } from "./circuits/disclose"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
 import { sha256 } from "@noble/hashes/sha256"
+import { DigestAlgorithm } from "./passport-reader/sod"
+
+const SUPPORTED_HASH_ALGORITHMS: DigestAlgorithm[] = ["SHA256", "SHA384", "SHA512"]
 
 export function isSignatureAlgorithmSupported(
   passport: PassportViewModel,
@@ -89,8 +92,10 @@ export function isCSCSupported(csc: Certificate): boolean {
     )
   }
   return (
-    csc.signature_algorithm.toLowerCase().includes("sha256") ||
-    // PSS is assumed to be always sha256
+    SUPPORTED_HASH_ALGORITHMS.some((x) =>
+      csc.signature_algorithm.toLowerCase().includes(x.toLowerCase()),
+    ) ||
+    // We assume that PSS is always sha256, sha384, or sha512
     csc.signature_algorithm.toLowerCase().includes("pss")
   )
 }
@@ -101,13 +106,19 @@ export function isIDSupported(passport: PassportViewModel): boolean {
   return (
     isSignatureAlgorithmSupported(passport, sodSignatureAlgorithm) &&
     isSignatureAlgorithmSupported(passport, dscSignatureAlgorithm) &&
-    (passport.sod.certificate.signatureAlgorithm.name.toLowerCase().includes("sha256") ||
+    (SUPPORTED_HASH_ALGORITHMS.some((x) =>
+      passport.sod.certificate.signatureAlgorithm.name.toLowerCase().includes(x.toLowerCase()),
+    ) ||
+      // We assume that PSS is always sha256, sha384, or sha512
       passport.sod.certificate.signatureAlgorithm.name.toLowerCase().includes("pss")) &&
-    (passport.sod.signerInfo.signatureAlgorithm.name.toLowerCase().includes("sha256") ||
+    (SUPPORTED_HASH_ALGORITHMS.some((x) =>
+      passport.sod.signerInfo.signatureAlgorithm.name.toLowerCase().includes(x.toLowerCase()),
+    ) ||
+      // We assume that PSS is always sha256, sha384, or sha512
       passport.sod.signerInfo.signatureAlgorithm.name.toLowerCase().includes("pss")) &&
-    passport.sod.digestAlgorithms.every((digest) => digest === "SHA256") &&
-    passport.sod.encapContentInfo.eContent.hashAlgorithm === "SHA256" &&
-    passport.sod.signerInfo.digestAlgorithm === "SHA256"
+    passport.sod.digestAlgorithms.every((digest) => SUPPORTED_HASH_ALGORITHMS.includes(digest)) &&
+    SUPPORTED_HASH_ALGORITHMS.includes(passport.sod.encapContentInfo.eContent.hashAlgorithm) &&
+    SUPPORTED_HASH_ALGORITHMS.includes(passport.sod.signerInfo.digestAlgorithm)
   )
 }
 
