@@ -10,11 +10,16 @@ export function proofToFields(proof: string) {
   const bytes = Buffer.from(proof, "hex")
 
   // Start from index 4 and chunk into 32-byte segments
-  const fields: Buffer[] = []
+  const fields = []
   for (let i = 4; i < bytes.length; i += 32) {
-    fields.push(bytes.subarray(i, i + 32))
+    // Create a new buffer for each field by copying the bytes
+    const fieldBytes = new Uint8Array(32)
+    const end = Math.min(i + 32, bytes.length)
+    for (let j = 0; j < end - i; j++) {
+      fieldBytes[j] = bytes[i + j]
+    }
+    fields.push(Buffer.from(fieldBytes))
   }
-
   return fields.map((field) => field.toString("hex"))
 }
 
