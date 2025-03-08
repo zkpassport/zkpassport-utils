@@ -23,7 +23,10 @@ export type DataGroupInfo = {
 
 export type PassportViewModel = {
   mrz: string
+  // First name (without middle names and secondary given names) and last name
   name: string
+  // First name (including middle names and secondary given names) and last name
+  fullName: string
   dateOfBirth: string
   nationality: string
   gender: string

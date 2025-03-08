@@ -25,6 +25,7 @@ export function formatName(name: string): string {
   return name
     .replace(/<+/g, " ")
     .replace(/</g, " ")
+    .replace(/\s+/g, " ")
     .replace(/[áàâäãå]/g, "a")
     .replace(/[éèêë]/g, "e")
     .replace(/[íìîï]/g, "i")
@@ -113,6 +114,8 @@ export class DisclosedData {
       indexOfDoubleChevron > 0 ? unformattedName.substring(0, indexOfDoubleChevron) : ""
     const firstName =
       indexOfDoubleChevron > 0 ? unformattedName.substring(indexOfDoubleChevron + 2) : ""
+    // To reverse the order as in passports it's lastName first
+    const fullName = firstName + " " + lastName
 
     return new DisclosedData({
       issuingCountry: decode(raw.issuingCountry),
@@ -121,7 +124,7 @@ export class DisclosedData {
       documentNumber: stripChevrons(decode(raw.documentNumber)),
       dateOfExpiry: parseDate(raw.dateOfExpiry),
       dateOfBirth: parseDate(raw.dateOfBirth),
-      name: formatName(unformattedName),
+      name: formatName(fullName),
       firstName: formatName(firstName),
       lastName: formatName(lastName),
       gender: decode(raw.gender),
@@ -167,6 +170,8 @@ export class DisclosedData {
       indexOfDoubleChevron > 0 ? unformattedName.substring(0, indexOfDoubleChevron) : ""
     const firstName =
       indexOfDoubleChevron > 0 ? unformattedName.substring(indexOfDoubleChevron + 2) : ""
+    // To reverse the order as in passports it's lastName first
+    const fullName = firstName + " " + lastName
 
     return new DisclosedData({
       issuingCountry: decode(raw.issuingCountry),
@@ -175,7 +180,7 @@ export class DisclosedData {
       documentNumber: stripChevrons(decode(raw.documentNumber)),
       dateOfExpiry: parseDate(raw.dateOfExpiry),
       dateOfBirth: parseDate(raw.dateOfBirth),
-      name: formatName(unformattedName),
+      name: formatName(fullName),
       firstName: formatName(firstName),
       lastName: formatName(lastName),
       gender: decode(raw.gender),
@@ -195,7 +200,7 @@ export function parseDate(bytes: Uint8Array): Date {
   const previousCentury = currentCentury - 100
   const fullYear =
     year + (year + currentCentury > currentYear + 10 ? previousCentury : currentCentury)
-  return new Date(fullYear, month, day)
+  return new Date(Date.UTC(fullYear, month, day, 0, 0, 0, 0))
 }
 
 function formatDateToBytes(date: Date): Uint8Array {

@@ -34,6 +34,7 @@ export class PassportReader {
       passportExpiry: mrz.slice(isIDCard ? 38 : 65, isIDCard ? 44 : 71),
       firstName: "",
       lastName: "",
+      fullName: mrz.slice(isIDCard ? 60 : 5, isIDCard ? 90 : 44),
       photo: "",
       originalPhoto: "",
 
