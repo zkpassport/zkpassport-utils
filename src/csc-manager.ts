@@ -235,7 +235,10 @@ export function parseCertificate(content: Buffer | string): Certificate {
         .algorithm as keyof typeof OIDS_TO_DESCRIPTION
     ] ?? x509.tbsCertificate.subjectPublicKeyInfo.algorithm.algorithm
 
-  if (publicKeyType === "rsaEncryption") {
+  // Some certificate have incoherent signatureAlgorithm and publicKeyType
+  // e.g. rsaEncryption and ecdsa-with-SHA256
+  // So we filter them out here by checking both the publicKeyType and signatureAlgorithm
+  if (publicKeyType === "rsaEncryption" && signatureAlgorithm.toLowerCase().includes("rsa")) {
     const rsaInfo = getRSAInfo(x509.tbsCertificate.subjectPublicKeyInfo)
     return {
       signature_algorithm: signatureAlgorithm as SignatureAlgorithm,
@@ -258,7 +261,10 @@ export function parseCertificate(content: Buffer | string): Certificate {
       subject_key_identifier: getSubjectKeyId(x509),
       private_key_usage_period: getPrivateKeyUsagePeriod(x509),
     }
-  } else if (publicKeyType === "ecPublicKey") {
+  } else if (
+    publicKeyType === "ecPublicKey" &&
+    signatureAlgorithm.toLowerCase().includes("ecdsa")
+  ) {
     const ecdsaInfo = getECDSAInfo(x509.tbsCertificate.subjectPublicKeyInfo)
     return {
       signature_algorithm: signatureAlgorithm as SignatureAlgorithm,

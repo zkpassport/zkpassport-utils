@@ -875,26 +875,6 @@
     {
       "signature_algorithm": "sha256WithRSAEncryption",
       "public_key": {
-        "type": "ecPublicKey",
-        "curve": "brainpoolP384r1",
-        "public_key_x": "0x05fc569fc7127c5e96f9afdd65ec5abbe5311d7bfb0e98f44e4912d75c7126bed7c6a1c9bc8f6b5803c2d3dd8fb89ae9",
-        "public_key_y": "0x8bb578b0916ca9e6b99ed6b3b860fc8251a015e710a6290c354b5d47187a86e3d1d6e4b3ffb0fbda143e61db3e011d57"
-      },
-      "country": "AUT",
-      "validity": {
-        "not_before": 1412240009,
-        "not_after": 1784451044
-      },
-      "key_size": 384,
-      "authority_key_identifier": "0x80141fe1572e9b35121363a50fee3e2ce2c1d187a8dd",
-      "subject_key_identifier": "0xff8dea86af18eee58ba2d6ba8cfaab39a169af5b",
-      "private_key_usage_period": {
-        "not_after": 1578560009
-      }
-    },
-    {
-      "signature_algorithm": "sha256WithRSAEncryption",
-      "public_key": {
         "type": "rsaEncryption",
         "modulus": "0xd213d1480459a827534f0126d9f17ffabcf5b29ca183031e1f4d9866d5d278b541a5a83c190ea07a5dff6be9c25fca7330ee3dfe12f9655d6c642426325548f436ff7eb979d72138f493e3d5631e1409fdde6da70e7cf4e9c3669905a48a23562487d45e8a3601a4a962396459a533deaa03ee296cb3d27d0dd397ace597f7dbceb9c0c3dacc6de020d3d4f9c1c220cda74e3d9e9c5ac0a7072b44ccfc8b07c6fb44930dc43db99d5fdfca0f3d007fdde292bdf892e99eb730e652432d5e64d7297e47c311f7917b14f60e31c1528855c9a9d027246edaaaa053e516b598a374659d759f79a4f8b7316b3fc9b51a95f71dd2b9559ddcbb6e696d62f38e09ab625c2c87884e1bd89b4bba7f46b8d0e49c38d142584a04bd883bf96ec813f4561b758fa14d1f31360f3e1230ac0e58e081d6fbda98b11245790f0f0117ee1662de32c00f8e3cef6aaba413c9dd4833e9345209dc843f38d464cd78a81ff867496893971f8cc406e9a152900417fc23283b86b298055b8c0ae1274681599876dd90bba8fae1cd3f026bbdffecc657e385a70c223ebf678ce209b4e7de7b4e8eab4e0626d89fc4b6ed16bf161cb4e16fbcbb65514419cd570b1499b00ec924396c782c98c75438b8573005def8d84817cd72ba0fcb39cd668d56b61d1c2c0148f38dec46b969a8e506f9df2545efe38b870d5ea3d310b69f2232bcb98daae41da39f",
         "exponent": 38129,
@@ -2786,27 +2766,6 @@
       "key_size": 4096,
       "authority_key_identifier": "0x8014a587528a4d42c40334c827f491a6f4aa6862f7e7",
       "subject_key_identifier": "0xfb56f66665f4352da058d3c05e3ecafc810592b6"
-    },
-    {
-      "signature_algorithm": "rsassa-pss",
-      "public_key": {
-        "type": "ecPublicKey",
-        "curve": "brainpoolP384r1",
-        "public_key_x": "0x74cab51d08e2fa62a70afbfeeda9ae3742abf882e003caaa282bdd8ef9986a23999f3ceec5a020100d17c3427f333dca",
-        "public_key_y": "0x69ea12813ed0741c0f9e281436d68df95fbe7b2b7ac9df73a2d298d48083711221bf40931fc1aebc6203743fabe20e34"
-      },
-      "country": "CHN",
-      "validity": {
-        "not_before": 1550735981,
-        "not_after": 1705823981
-      },
-      "key_size": 384,
-      "authority_key_identifier": "0x80145d891e7914f6fdffd40a1bc6f10a5e5dcd4bca86",
-      "subject_key_identifier": "0x1ca2477bef6c35aedf404edb5db2730c347ba773",
-      "private_key_usage_period": {
-        "not_before": 1550735981,
-        "not_after": 1705823981
-      }
     },
     {
       "signature_algorithm": "sha256WithRSAEncryption",
@@ -5087,27 +5046,6 @@
       "subject_key_identifier": "0x44980648e1f9fd7c6db82b6b353c09cf26f29026"
     },
     {
-      "signature_algorithm": "sha512WithRSAEncryption",
-      "public_key": {
-        "type": "ecPublicKey",
-        "curve": "brainpoolP512r1",
-        "public_key_x": "0x10bd0cb472ca330ff84c0ce076695decdf5a7e520bdac5ec3a316d3cca3501bb20ddc398673a4b6d28e1fc21f8f928e76c4d3a9e96d6ffc179c333a4b94bba6c",
-        "public_key_y": "0x7980714d2c14165f837c416cce07c2381c1c3db05a9a3d6d8fcb5c3804579e24a6135416311b401dbaeda8bb29ea577dbcd735d9c6df0f60d11715085d84f839"
-      },
-      "country": "FIN",
-      "validity": {
-        "not_before": 1649226252,
-        "not_after": 1918364792
-      },
-      "key_size": 512,
-      "authority_key_identifier": "0x801487589c29d9769cf5b7ea661a3c8ca5fca268be94",
-      "subject_key_identifier": "0xd69f6ca7f2e0ab2c5afaf19e697268364d31d393",
-      "private_key_usage_period": {
-        "not_before": 1649226252,
-        "not_after": 1806992652
-      }
-    },
-    {
       "signature_algorithm": "sha256WithRSAEncryption",
       "public_key": {
         "type": "rsaEncryption",
@@ -5252,27 +5190,6 @@
       "private_key_usage_period": {
         "not_before": 1384214400,
         "not_after": 1641945600
-      }
-    },
-    {
-      "signature_algorithm": "sha256WithRSAEncryption",
-      "public_key": {
-        "type": "ecPublicKey",
-        "curve": "P-384",
-        "public_key_x": "0x60a2ff75eaad3c327bb559ae164c018c58b14f1328c4c908239e4a9172245294776b7efdd9a703e03bc857d1ff18de14",
-        "public_key_y": "0x11a35b502d90728fd46d1a56db769458131a52f52564f602cec8ee5f51bc6cb05f309203e4d73d421f0ff09fbc2e2c21"
-      },
-      "country": "GBR",
-      "validity": {
-        "not_before": 1473416791,
-        "not_after": 1988880991
-      },
-      "key_size": 384,
-      "authority_key_identifier": "0x8014ad4be7657eeaced2e168cd91316f61807f1c91e3",
-      "subject_key_identifier": "0xdb1d1657c76023089b0139e2613c082134b57ca1",
-      "private_key_usage_period": {
-        "not_before": 1473416791,
-        "not_after": 1633211935
       }
     },
     {
@@ -6388,27 +6305,6 @@
       "subject_key_identifier": "0xa12ae326fc2b0d76a85c8b4711b9c1c22061c919"
     },
     {
-      "signature_algorithm": "sha256WithRSAEncryption",
-      "public_key": {
-        "type": "ecPublicKey",
-        "curve": "P-384",
-        "public_key_x": "0x8ad46bdafdddf62623d9a18dca1f14fab8e59860bff7914ce937c0cb6f5206cf22b83a4151fd6f7de1802f33550ab0ca",
-        "public_key_y": "0xe75fa1796b0265b023e7c04159dd9ca5c5d847f61da5324c0fb790991492376332be18b2294732c962721502708225cb"
-      },
-      "country": "HUN",
-      "validity": {
-        "not_before": 1603185303,
-        "not_after": 2003221800
-      },
-      "key_size": 384,
-      "authority_key_identifier": "0x801489f5568866ef111478257660831041f8835431e2",
-      "subject_key_identifier": "0xe5764360a2e8881eaf4ead4f01b879bc466b2ec6",
-      "private_key_usage_period": {
-        "not_before": 1603185303,
-        "not_after": 1697793303
-      }
-    },
-    {
       "signature_algorithm": "sha1-with-rsa-signature",
       "public_key": {
         "type": "rsaEncryption",
@@ -6528,27 +6424,6 @@
       "private_key_usage_period": {
         "not_before": 1343889356,
         "not_after": 1438497356
-      }
-    },
-    {
-      "signature_algorithm": "sha256WithRSAEncryption",
-      "public_key": {
-        "type": "ecPublicKey",
-        "curve": "P-384",
-        "public_key_x": "0x8ad46bdafdddf62623d9a18dca1f14fab8e59860bff7914ce937c0cb6f5206cf22b83a4151fd6f7de1802f33550ab0ca",
-        "public_key_y": "0xe75fa1796b0265b023e7c04159dd9ca5c5d847f61da5324c0fb790991492376332be18b2294732c962721502708225cb"
-      },
-      "country": "HUN",
-      "validity": {
-        "not_before": 1603185303,
-        "not_after": 1839671509
-      },
-      "key_size": 384,
-      "authority_key_identifier": "0x8014a12ae326fc2b0d76a85c8b4711b9c1c22061c919",
-      "subject_key_identifier": "0xe5764360a2e8881eaf4ead4f01b879bc466b2ec6",
-      "private_key_usage_period": {
-        "not_before": 1603185303,
-        "not_after": 1697793303
       }
     },
     {
@@ -6766,27 +6641,6 @@
       "private_key_usage_period": {
         "not_before": 1580979600,
         "not_after": 1675674000
-      }
-    },
-    {
-      "signature_algorithm": "sha256WithRSAEncryption",
-      "public_key": {
-        "type": "ecPublicKey",
-        "curve": "P-384",
-        "public_key_x": "0x8ad46bdafdddf62623d9a18dca1f14fab8e59860bff7914ce937c0cb6f5206cf22b83a4151fd6f7de1802f33550ab0ca",
-        "public_key_y": "0xe75fa1796b0265b023e7c04159dd9ca5c5d847f61da5324c0fb790991492376332be18b2294732c962721502708225cb"
-      },
-      "country": "HUN",
-      "validity": {
-        "not_before": 1603185303,
-        "not_after": 2001311427
-      },
-      "key_size": 384,
-      "authority_key_identifier": "0x8014400478412a8b2477ac7bce9422a3879e42cf0e9c",
-      "subject_key_identifier": "0xe5764360a2e8881eaf4ead4f01b879bc466b2ec6",
-      "private_key_usage_period": {
-        "not_before": 1603185303,
-        "not_after": 1697793303
       }
     },
     {
@@ -7275,27 +7129,6 @@
     {
       "signature_algorithm": "sha512WithRSAEncryption",
       "public_key": {
-        "type": "ecPublicKey",
-        "curve": "P-521",
-        "public_key_x": "0x0091c918b5de2189c13b00cd156c1c841cd3338ce52f77835abdccd02d8653441777910bd8d2122a41b58b566537c90f6919dbbcf24b34915809d0dca216e7ec4928",
-        "public_key_y": "0x00b9486f897de307eafbf5c807ac394cf045d45c5bd338a002597355d04ea3b31edad45e2035e2a7de4dfff6a98140f8e7485ad6548d1846647c0931d6121e79119f"
-      },
-      "country": "ISL",
-      "validity": {
-        "not_before": 1700645159,
-        "not_after": 2028290245
-      },
-      "key_size": 521,
-      "authority_key_identifier": "0x80147d2ce680836a0dec53eca9d3041de59daef70ecb",
-      "subject_key_identifier": "0x792f6308892687b88a4e4873554a01005dfcd63a",
-      "private_key_usage_period": {
-        "not_before": 1700645159,
-        "not_after": 1857720359
-      }
-    },
-    {
-      "signature_algorithm": "sha512WithRSAEncryption",
-      "public_key": {
         "type": "rsaEncryption",
         "modulus": "0x899eea8c7a195940bfa246d50f660e1a2f0d9fe48cdb7316c811a70b8fa6813e72b1be9fab8ca5cf21f5d680c80d6c1a955391abbe82fc4d13659b81b234444237f3858a23b3fd0e5f0d06fdd3610d65e881fbe2660ca6627171471d1e4db3c5584db16fc6f1774e8a8ac2c2f729190f5c8fccece382f01fccddddba3b649a67d662627d5f303a665fb1900272d9d5adde8024fceedea244eccdda7af522cbc7dcc70313806300187a0c19a22deadc62af8d2fce4b58424b838376247924fe4fd586de26e58628eaecf7e5aa5e3e6b3c6781cf8cb95596099c36411d195674180856e8b30c4b831b3422fe19ed0a3c58279203007169e78b1385e8687a4aa1e22a22d5944da9d52294150535ddb64068fe861855699e847241bff25436242bf728d7fc8cd501606195a5e17c74d79b9e5cbe1a54e15a62ec4c5d7f2857367528c93017b5e34b9178bd9418b065e4012620424c70d53e55ab4d078499955835dd8e75b1599da603c575860a358e1691369a44eb2eb0f7e570a345c47d96e3edff2a361faddf89ff63c1ad84d32b0639f7c60f53c473de196eaf6eecbb5d5dc432bb24d1b1943f3caa6b23ebb79d65b5cbd3ada9380968f6a08638369ccab284d3f45ec44dd2c1c7702cc240e0e968f655ba3e12bdaa0be0a44f691ef4dfa521c949bf54bbf659264d4f73f11ca7d4be0bfd4f4a3963d964cddd7fdc9b721ba739",
         "exponent": 65537,
@@ -7390,23 +7223,6 @@
       "key_size": 4096,
       "authority_key_identifier": "0x8014d4be4c0ef674b601e83f733964851681d06e0f9b",
       "subject_key_identifier": "0xd4be4c0ef674b601e83f733964851681d06e0f9b"
-    },
-    {
-      "signature_algorithm": "rsassa-pss",
-      "public_key": {
-        "type": "ecPublicKey",
-        "curve": "P-384",
-        "public_key_x": "0x3d5070b1dde406ea559d9cc62ff562d14e8234fe45db5a550bfcea39c502744e5d2e4aea11c62bea1af627170f52faa9",
-        "public_key_y": "0x7af9bed5edfc3882fb250523e2f733d3d187e1fe50f9f4543cc0ddd5f65164756dfd5a7b403b3dea30549ecf497ba804"
-      },
-      "country": "ISR",
-      "validity": {
-        "not_before": 1690224630,
-        "not_after": 2179507830
-      },
-      "key_size": 384,
-      "authority_key_identifier": "0x801458a91d9fda0d79df7dccc5c56da17e050e72d1a8",
-      "subject_key_identifier": "0xd0882fe6e8a5e266e0c977f3bad602b9757f82e2"
     },
     {
       "signature_algorithm": "ecdsa-with-SHA384",
@@ -7804,27 +7620,6 @@
     {
       "signature_algorithm": "rsassa-pss",
       "public_key": {
-        "type": "ecPublicKey",
-        "curve": "P-384",
-        "public_key_x": "0xa1ce23c270e8ca3fa9592f5782670a6e6519c9a6a83b1d8a0c9aef7b935c1340382c83a813ea3b9f72a0a95851d673b3",
-        "public_key_y": "0x67e34f9ec0121e836552e44ae439aff792bad44043adf2695cb1dae6fc7a1804dbcd595c5a71c91f6e33f132fce23436"
-      },
-      "country": "JPN",
-      "validity": {
-        "not_before": 1560921319,
-        "not_after": 1929317292
-      },
-      "key_size": 384,
-      "authority_key_identifier": "0x801448458e886926a0d0b11d2b422fc59b459be1ec7b",
-      "subject_key_identifier": "0x6ab4f29282bd9647f6ff2a02f7944d749e978463",
-      "private_key_usage_period": {
-        "not_before": 1560921319,
-        "not_after": 1929317292
-      }
-    },
-    {
-      "signature_algorithm": "rsassa-pss",
-      "public_key": {
         "type": "rsaEncryption",
         "modulus": "0xb89439b7b088d7b05e321c3e91054fefe712f0f35392a5240dfb325f3f416953334925e82c8c82cb20a030b51d2a76cc104e34e4ba4c094b1ea2770cba01fa0d5edd69186dff6670234c3976f15165f1033883f757164d1448bfaa75a14e4d87fcc1e3165fc1a9c10d83552b7a08749972f9de562486ccede6374f3a2bc013ce265f9e1c2d0789cc0787807013702c4e48f981e30c4105f00efcef059153b443917ad8ee2aabebc4b8b033d1150c611f72ca3110771393c400af4aa1f8c03b1a57584582c4541aff1c01796138a9aa050afe41e1cc1064ee4c26c652ee6ab2e9002282e87e2b9bef6008e7cb139e7c8616b1004008ef23d02eb814a901cc024f7301f1489db195b06b98fdedd2b7126bad9d99b0d0958e6a39e9dc17b111edb292061232f70c1c571d91495670130be349c6f0e7e8304cb6e18f6e864d9674bc406e28e904f1e50af8c4bcf659733f0b8770e5efc53bb68e05babbea9db584032c236aaf85f7492bc65cb0b07c3bdebc72bcb7febbaf7bc2f8e5c5b7f545c925224c8ffcfed788017bcb1decc571dab0a0407dd0df03a142a784c2910b4c03d3ce58a6b7e8edcff7a4970287e588d06c2876e3690c779aee1419b1dd7aa5ba193fbf84ed4a0b9a14979c7eea69323a727c793d8b6596634c4de86003edd7bb1379685c1ae9a5ceae4937e3ba4f5012787c724cf05963d025b72150c38e3fd3e5",
         "exponent": 65537,
@@ -7858,27 +7653,6 @@
       "subject_key_identifier": "0x48458e886926a0d0b11d2b422fc59b459be1ec7b",
       "private_key_usage_period": {
         "not_before": 1424395692,
-        "not_after": 1929317292
-      }
-    },
-    {
-      "signature_algorithm": "ecdsa-with-SHA384",
-      "public_key": {
-        "type": "rsaEncryption",
-        "modulus": "0xaff531595fac7914b0d6a253c44472b7206b88f3e5712b9317f03943705a3f9966f55306b5b728cfa9b88a93feb969a831fb82c52db75c08e4c93466ba3798ce4403912082ef31a6080979a835ee16be1ddee99e0182505b8d719463e72953888916aa72556cbef6458c556e872f4056ed64dc3bde2dfb38000deb355bec49547f1e35e1bb898dd502b45f827c7b71648ef00e8fa97f334aabcf32d832c560f1b3db2c1c5ddf2f2c1012e6e786fd3a95388693b21ecc5be77f79076fa9c76caea938096afe20c1af20d857f887609251666ffb659b33ef03e431cce0735155651a6db141d956d9674d124830c5853ad12af213cfc916b093a01699ca222c5b2ffd93a9980febf950a952bb2c434f931cfd09b326364bfa4f6bf4a6bbf7552ebdda13c190e5620ebe0c79d01ee358ae0042f16d8555523c1133c81c6035e275288a3990511484b6836fcf9185e31f02bc52c20de08318d22ff979d16d64b854968b304e1c41b31db65bccbfada6edd5645137cda7273bb9e892953b07a496c5d04dd753f06457082be293c95416afd1cfdf787a5f29b021dc1482484b1f9ae212d9ae62fbba5915dcc1547de8965087013017c0e9e245266aacf83069453071dceadac0faab232a5e1e436ba2b7897eab8669133dfca3981e0662e0772ec930cf0654efbad22603f7c60fab6c09a2a30bb862959337e544a5728d14f9d7715ed5",
-        "exponent": 65537,
-        "scheme": "pkcs"
-      },
-      "country": "JPN",
-      "validity": {
-        "not_before": 1424395692,
-        "not_after": 1929317292
-      },
-      "key_size": 4096,
-      "authority_key_identifier": "0x80146ab4f29282bd9647f6ff2a02f7944d749e978463",
-      "subject_key_identifier": "0x48458e886926a0d0b11d2b422fc59b459be1ec7b",
-      "private_key_usage_period": {
-        "not_before": 1560921319,
         "not_after": 1929317292
       }
     },
@@ -11367,23 +11141,6 @@
       }
     },
     {
-      "signature_algorithm": "sha256WithRSAEncryption",
-      "public_key": {
-        "type": "ecPublicKey",
-        "curve": "P-384",
-        "public_key_x": "0xd839c3eb261454194984679f06e269a89479a85c24998ddf32cd52ab1dce287cf3eae5c57bccf4a819f88f6b1b997765",
-        "public_key_y": "0x6c0cb60ed8d3a10cef81be68ebe2326fd9bed31cad0765a584abe53b91477efde925a684cbcba9b61fca6e77aac66e47"
-      },
-      "country": "NZL",
-      "validity": {
-        "not_before": 1523918479,
-        "not_after": 1618614679
-      },
-      "key_size": 384,
-      "authority_key_identifier": "0x8014f9d6c969fe97d184eef2c1d7e520b66032be3df7",
-      "subject_key_identifier": "0x217436344644d99be1d870628f5dab9ec2d71727"
-    },
-    {
       "signature_algorithm": "ecdsa-with-SHA256",
       "public_key": {
         "type": "ecPublicKey",
@@ -13838,27 +13595,6 @@
     {
       "signature_algorithm": "sha256WithRSAEncryption",
       "public_key": {
-        "type": "ecPublicKey",
-        "curve": "P-521",
-        "public_key_x": "0x01ed7f7d4d407cdcad3f56f4b4c19c1baaf591ab9b6701b279993bac2226e013b9b7c3c7316f5298d2d77f48196f414f6134260f5ca0bcaf4d03c70c48c653c563ce",
-        "public_key_y": "0x011642e0aa6f7ac39ade27f5c3ee53d2595b6b1123efc1e189a69f0eab3a922dc72e0fe7565f272df84ff2c22bf40250c9b7cc6fa03fc66d53ae8e6c7424188662d9"
-      },
-      "country": "TUR",
-      "validity": {
-        "not_before": 1519130519,
-        "not_after": 1880207527
-      },
-      "key_size": 521,
-      "authority_key_identifier": "0x801464389d154eba8000091857847f6f3238ea621bc4",
-      "subject_key_identifier": "0x87b019807da2ccb6987b0773165603b1f5ceb2fe",
-      "private_key_usage_period": {
-        "not_before": 1518596809,
-        "not_after": 1613204809
-      }
-    },
-    {
-      "signature_algorithm": "sha256WithRSAEncryption",
-      "public_key": {
         "type": "rsaEncryption",
         "modulus": "0xdf935d9f05363c87dfc8fd7330ecf65541bc9a0df170bff03907d64333aa44b045c08a8ffb6eef7713bda9d494692bf2d81a270f47bf0263f345b1615afa013b25d5854235fbaf73628222b59d87a50418df459febc2948905fc0368ac5f3886a010ce9bd96b6dc3d314f1d179ed6f86a2924566cb2aaf90ff966c981f60edbd61c1cc07f1acee33b603a12880e7eddc574c62fea65dcadc6d35e2c0dfdcb627f206d640be42cb4700c1cdbb795c4e82447200c6b2e1d5fd5a68c2bee0beb9187657733a2ac3041dd452d419de84862854832cf3ea0210dab4a3ca678be7db3efda172637ead744dea96186e3a0ac59aa2f59da8716cb71690a9a8ddb4e0f7b5a8e300a3aa6197952c3958beefd18ff605311234ad520c8678fc474f2756a48b3252b67c9a503fb2476419d4c0d8e5317b74909fe7405e8fd4a812b72fe76d11469ad446de282984ec43875b27358e59afdfe96ca25b7134aff05d3d058d39c954f3699a85977da50208763f077e55e84cda80f064d547a2ac82c9a08e96900f240ce2c6b235cb3c53c4b5dfccc406b8b1aec8c577adc299996cbdb14d4f90be7b53da4536381271032e233cfba0e86e06e89eab7314ae6bdcf82a0040c6a15fb0a57841827ea1aaf3ecae0f8c6558ef64f6ef8ca2b83bf8312f6997b65ea3f5b7e0ea9177a908f56acfd46a326d2ca808bb1a1499c2b3dfbb56a2f1ea6f2c9f",
         "exponent": 65537,
@@ -13938,27 +13674,6 @@
       "private_key_usage_period": {
         "not_before": 1709625758,
         "not_after": 1804233758
-      }
-    },
-    {
-      "signature_algorithm": "sha256WithRSAEncryption",
-      "public_key": {
-        "type": "ecPublicKey",
-        "curve": "P-521",
-        "public_key_x": "0x01038fdb2767be2cdd998661c4d0ab00df62ddb733661b2a229cbb9cff24127291058772c5db2bad85ee4e2b450a5a399b27e5e2f6e1432eac5e47653c8b9582cc3a",
-        "public_key_y": "0x006cbf86e163943d0e95fea3deea5c5b4a9b01e8fe94214596322c7a1a29a85b12de8a7aada50652b0ba60b2574e59f8b5aa2c11eadc587b1b4ff661106aed0828e6"
-      },
-      "country": "TUR",
-      "validity": {
-        "not_before": 1521454410,
-        "not_after": 1880207527
-      },
-      "key_size": 521,
-      "authority_key_identifier": "0x801464389d154eba8000091857847f6f3238ea621bc4",
-      "subject_key_identifier": "0x6f9bbbc69eecdad9bc31e950e11ed0ca00220596",
-      "private_key_usage_period": {
-        "not_before": 1520602703,
-        "not_after": 1615210703
       }
     },
     {
