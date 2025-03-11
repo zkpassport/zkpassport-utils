@@ -342,7 +342,9 @@ export async function getDSCCircuitInputs(
         return Binary.fromHex(hash)
       }),
     ))
-  const index = cscMasterlist.certificates.findIndex((cert) => cert === csc)
+  const index = cscMasterlist.certificates.findIndex(
+    (cert) => cert.subject_key_identifier === csc.subject_key_identifier,
+  )
   const finalMerkleProof =
     merkleProof ?? (await computeMerkleProof(leaves, index, CERTIFICATE_REGISTRY_HEIGHT))
   const inputs = {
