@@ -102,10 +102,8 @@ export function isCSCSupported(csc: Certificate): boolean {
 
 export function isIDSupported(passport: PassportViewModel): boolean {
   const sodSignatureAlgorithm = getSodSignatureAlgorithmType(passport)
-  const dscSignatureAlgorithm = getDSCSignatureAlgorithmType(passport)
   return (
     isSignatureAlgorithmSupported(passport, sodSignatureAlgorithm) &&
-    isSignatureAlgorithmSupported(passport, dscSignatureAlgorithm) &&
     (SUPPORTED_HASH_ALGORITHMS.some((x) =>
       passport.sod.certificate.signatureAlgorithm.name.toLowerCase().includes(x.toLowerCase()),
     ) ||
@@ -415,13 +413,19 @@ export async function getIDDataCircuitInputs(
 
   const signatureAlgorithm = getSodSignatureAlgorithmType(passport)
   if (signatureAlgorithm === "ECDSA") {
+    const tbsCertificate = extractTBS(passport)
+    if (!tbsCertificate) return null
+    const ecdsaInfo = getECDSAInfo(tbsCertificate.subjectPublicKeyInfo)
+    const curve = ecdsaInfo.curve
+    const bitSize = getBitSizeFromCurve(curve)
+    const sodSignature = processECDSASignature(passport?.sodSignature ?? [], Math.ceil(bitSize / 8))
     return {
       ...inputs,
       tbs_certificate: dscData.tbs_certificate,
       pubkey_offset_in_tbs: dscData.pubkey_offset_in_tbs,
       dsc_pubkey_x: (dscData as ECDSADSCDataInputs).dsc_pubkey_x,
       dsc_pubkey_y: (dscData as ECDSADSCDataInputs).dsc_pubkey_y,
-      sod_signature: passport?.sodSignature ?? [],
+      sod_signature: sodSignature,
       signed_attributes: idData.signed_attributes,
       signed_attributes_size: idData.signed_attributes_size,
     }
