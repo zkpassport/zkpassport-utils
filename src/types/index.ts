@@ -131,6 +131,7 @@ export type PackagedCircuit = {
   name: string
   noir_version: string
   bb_version: string
+  size: number
   abi: {
     parameters: Parameter[]
     param_witnesses: {
