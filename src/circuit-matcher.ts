@@ -501,7 +501,8 @@ export function getFirstNameRange(passport: PassportViewModel): [number, number]
   const lastNameStartIndex = isIDCard ? 60 : 5
   const firstNameStartIndex = getOffsetInArray(mrz.split(""), ["<", "<"], lastNameStartIndex) + 2
   const firstNameEndIndex = getOffsetInArray(mrz.split(""), ["<"], firstNameStartIndex)
-  return [firstNameStartIndex, firstNameEndIndex]
+  // Subtract 2 from the start index to include the two angle brackets
+  return [firstNameStartIndex - 2, firstNameEndIndex]
 }
 
 export function getLastNameRange(passport: PassportViewModel): [number, number] {

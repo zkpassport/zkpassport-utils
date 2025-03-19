@@ -167,9 +167,9 @@ export class DisclosedData {
     const unformattedName = raw.name && raw.name.length > 0 ? decode(raw.name) : ""
     const indexOfDoubleChevron = unformattedName.indexOf("<<")
     const lastName =
-      indexOfDoubleChevron > 0 ? unformattedName.substring(0, indexOfDoubleChevron) : ""
+      indexOfDoubleChevron >= 0 ? unformattedName.substring(0, indexOfDoubleChevron) : ""
     const firstName =
-      indexOfDoubleChevron > 0 ? unformattedName.substring(indexOfDoubleChevron + 2) : ""
+      indexOfDoubleChevron >= 0 ? unformattedName.substring(indexOfDoubleChevron + 2) : ""
     // To reverse the order as in passports it's lastName first
     const fullName = firstName + " " + lastName
 
