@@ -252,3 +252,19 @@ export function createDisclosedDataRaw(data: {
     gender: processInput(data.gender, 1),
   }
 }
+
+/**
+ * Get the number of public inputs for the disclose bytes proof.
+ * @returns The number of public inputs.
+ */
+export function getDiscloseBytesProofPublicInputCount(): number {
+  return 184
+}
+
+/**
+ * Get the number of public inputs for the disclose flags proof.
+ * @returns The number of public inputs.
+ */
+export function getDiscloseFlagsProofPublicInputCount(): number {
+  return 73
+}

@@ -16,3 +16,11 @@ export function getCurrentDateFromIntegrityProof(proofData: ProofData): Date {
   const date = convertDateBytesToDate(dateBytes.join(""))
   return date
 }
+
+/**
+ * Get the number of public inputs for the integrity proof.
+ * @returns The number of public inputs.
+ */
+export function getIntegrityProofPublicInputCount(): number {
+  return 10
+}

@@ -37,3 +37,13 @@ export function ultraVkToFields(vkey: Uint8Array): string[] {
   }
   return fields
 }
+
+/**
+ * Get the number of public inputs from a vkey.
+ * @param vkey - The vkey to get the number of public inputs from.
+ * @returns The number of public inputs.
+ */
+export function getNumberOfPublicInputsFromVkey(vkey: Uint8Array): number {
+  const num_public_inputs = bufferToField(vkey.slice(8, 16))
+  return parseInt(num_public_inputs, 16)
+}

@@ -2,6 +2,17 @@ import { CERTIFICATE_REGISTRY_ID, CERT_TYPE_CSC } from "../constants"
 import { Binary } from "../binary"
 import { poseidon2HashAsync } from "@zkpassport/poseidon2"
 import { Certificate, ECDSACSCPublicKey, PackagedCircuit, RSACSCPublicKey } from "../types"
+import { getDiscloseFlagsProofPublicInputCount } from "./disclose"
+import { getDiscloseBytesProofPublicInputCount } from "./disclose"
+import { getIntegrityProofPublicInputCount } from "./integrity"
+import { getAgeProofPublicInputCount } from "./age"
+import { getDateProofPublicInputCount } from "./date"
+import { getDSCProofPublicInputCount } from "./dsc"
+import {
+  getCountryExclusionProofPublicInputCount,
+  getCountryInclusionProofPublicInputCount,
+  getIDDataProofPublicInputCount,
+} from ".."
 
 export interface ProofData {
   publicInputs: string[]
@@ -133,6 +144,34 @@ export async function getHostedPackagedCircuitByName(
   const response = await fetch(`https://circuits.zkpassport.id/versions/${version}/${name}.json.gz`)
   const circuit = await response.json()
   return circuit
+}
+
+/**
+ * Get the number of public inputs for a circuit.
+ * @param circuitName - The name of the circuit.
+ * @returns The number of public inputs.
+ */
+export function getNumberOfPublicInputs(circuitName: string) {
+  if (circuitName === "disclose_bytes") {
+    return getDiscloseBytesProofPublicInputCount()
+  } else if (circuitName === "disclose_flags") {
+    return getDiscloseFlagsProofPublicInputCount()
+  } else if (circuitName === "compare_age") {
+    return getAgeProofPublicInputCount()
+  } else if (circuitName === "compare_birthdate" || circuitName === "compare_expiry") {
+    return getDateProofPublicInputCount()
+  } else if (circuitName.startsWith("exclusion_check")) {
+    return getCountryExclusionProofPublicInputCount()
+  } else if (circuitName.startsWith("inclusion_check")) {
+    return getCountryInclusionProofPublicInputCount()
+  } else if (circuitName.startsWith("data_check_integrity")) {
+    return getIntegrityProofPublicInputCount()
+  } else if (circuitName.startsWith("sig_check_id_data")) {
+    return getIDDataProofPublicInputCount()
+  } else if (circuitName.startsWith("sig_check_dsc")) {
+    return getDSCProofPublicInputCount()
+  }
+  return 0
 }
 
 export { DisclosedData, createDisclosedDataRaw, formatName, parseDocumentType } from "./disclose"

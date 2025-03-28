@@ -38,3 +38,11 @@ export function getMaxDateFromProof(proofData: ProofData): Date {
   const date = convertDateBytesToDate(dateBytes.join(""))
   return date
 }
+
+/**
+ * Get the number of public inputs for the date proof.
+ * @returns The number of public inputs.
+ */
+export function getDateProofPublicInputCount(): number {
+  return 28
+}

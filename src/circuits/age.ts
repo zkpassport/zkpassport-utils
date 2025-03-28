@@ -16,3 +16,11 @@ export function getCurrentDateFromAgeProof(proofData: ProofData): Date {
   const date = convertDateBytesToDate(dateBytes.join(""))
   return date
 }
+
+/**
+ * Get the number of public inputs for the age proof.
+ * @returns The number of public inputs.
+ */
+export function getAgeProofPublicInputCount(): number {
+  return 14
+}
