@@ -72,7 +72,7 @@ export function getProofData(proof: string, publicInputsNumber: number) {
   const proofBytes = Buffer.from(proofWithoutPublicInputs.join(""), "hex")
   const publicInputs = getPublicInputs(proofAsFields, publicInputsNumber)
   return {
-    proof: Binary.fromHex(proof).slice(0, 4).concat(Binary.fromBuffer(proofBytes)).toUInt8Array(),
+    proof: Binary.fromBuffer(proofBytes).toUInt8Array(),
     // Make sure it's prefixed with 0x
     publicInputs: publicInputs.map((input) => (input.startsWith("0x") ? input : `0x${input}`)),
   }
