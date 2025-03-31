@@ -572,7 +572,7 @@ export async function getDiscloseCircuitInputs(
   const discloseMask = Array(90).fill(0)
   let fieldsToDisclose: { [key in IDCredential]: boolean } = {} as any
   for (const field in query) {
-    if (query[field as IDCredential]?.disclose) {
+    if (query[field as IDCredential]?.disclose || query[field as IDCredential]?.eq) {
       fieldsToDisclose[field as IDCredential] = true
     }
   }
