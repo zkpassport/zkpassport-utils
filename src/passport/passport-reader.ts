@@ -1,11 +1,11 @@
-import { Binary } from "../binary"
-import { PassportViewModel } from "../types"
 import { AsnParser } from "@peculiar/asn1-schema"
 import { TBSCertificate } from "@peculiar/asn1-x509"
-import { HASH_OIDS } from "../cms/constants"
-import { DigestAlgorithm, SOD } from "./sod"
+import { Binary } from "../binary"
 import { ASN } from "../cms/asn"
+import { HASH_OIDS } from "../cms/constants"
 import { decodeOID } from "../cms/oids"
+import { PassportViewModel } from "../types"
+import { DigestAlgorithm, SOD } from "./sod"
 
 export class PassportReader {
   public dg1?: Binary

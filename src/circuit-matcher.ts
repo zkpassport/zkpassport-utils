@@ -28,7 +28,7 @@ import {
   getDSCSignatureAlgorithmType,
   getSodSignatureAlgorithmType,
 } from "./passport/passport-reader"
-import { DigestAlgorithm } from "./passport/sod"
+import type { DigestAlgorithm } from "./cms/types"
 import {
   Certificate,
   CSCMasterlist,
@@ -51,6 +51,7 @@ import {
   leftPadArrayWithZeros,
   rightPadArrayWithZeros,
 } from "./utils"
+
 const SUPPORTED_HASH_ALGORITHMS: DigestAlgorithm[] = ["SHA256", "SHA384", "SHA512"]
 
 export function isSignatureAlgorithmSupported(
