@@ -1,11 +1,12 @@
+import { ContentInfo, SignedData } from "@peculiar/asn1-cms"
 import { AsnParser } from "@peculiar/asn1-schema"
 import { TBSCertificate } from "@peculiar/asn1-x509"
 import { Binary } from "../binary"
-import { ASN } from "../cms/asn"
 import { HASH_OIDS } from "../cms/constants"
 import { decodeOID } from "../cms/oids"
+import type { DigestAlgorithm } from "../cms/types"
 import { PassportViewModel } from "../types"
-import { DigestAlgorithm, SOD } from "./sod"
+import { SOD } from "./sod"
 
 export class PassportReader {
   public dg1?: Binary
@@ -75,9 +76,9 @@ export class PassportReader {
   }
 }
 
-export function getSODContent(passport: PassportViewModel): ASN.SignedData {
-  const cert = AsnParser.parse(passport.sod.bytes.toBuffer(), ASN.ContentInfo)
-  const signedData = AsnParser.parse(cert.content, ASN.SignedData)
+export function getSODContent(passport: PassportViewModel): SignedData {
+  const cert = AsnParser.parse(passport.sod.bytes.toBuffer(), ContentInfo)
+  const signedData = AsnParser.parse(cert.content, SignedData)
   return signedData
 }
 

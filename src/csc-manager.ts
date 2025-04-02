@@ -2,7 +2,7 @@ import { AsnParser } from "@peculiar/asn1-schema"
 import { Certificate as X509Certificate } from "@peculiar/asn1-x509"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
 import { Certificate, SignatureAlgorithm } from "./types"
-import { OIDS_TO_DESCRIPTION } from "./cms/oids"
+import { OIDS_TO_DESCRIPTION } from "./cms/constants"
 import {
   getECDSAInfo,
   getPrivateKeyUsagePeriod,
