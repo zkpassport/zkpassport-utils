@@ -1,17 +1,11 @@
 import { Binary } from "../binary"
 import { PassportViewModel } from "../types"
-import { p256 } from "@noble/curves/p256"
-import { p384 } from "@noble/curves/p384"
-import { p521 } from "@noble/curves/p521"
-import { ECParameters } from "@peculiar/asn1-ecc"
-import { RSAPublicKey, RsaSaPssParams } from "@peculiar/asn1-rsa"
 import { AsnParser } from "@peculiar/asn1-schema"
-import { AlgorithmIdentifier, SubjectPublicKeyInfo, TBSCertificate } from "@peculiar/asn1-x509"
-import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "../cms/constants"
+import { TBSCertificate } from "@peculiar/asn1-x509"
+import { HASH_OIDS } from "../cms/constants"
 import { DigestAlgorithm, SOD } from "./sod"
 import { ASN } from "../cms/asn"
 import { decodeOID } from "../cms/oids"
-import { getCurveName } from "../cms/utils"
 
 export class PassportReader {
   public dg1?: Binary

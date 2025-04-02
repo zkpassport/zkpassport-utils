@@ -2,7 +2,14 @@ import { ECParameters } from "@peculiar/asn1-ecc"
 import { p256 } from "@noble/curves/p256"
 import { p384 } from "@noble/curves/p384"
 import { p521 } from "@noble/curves/p521"
-import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "./constants"
+import {
+  BRAINPOOL_CURVES,
+  CURVE_OIDS,
+  HASH_OIDS,
+  OIDS_TO_PUBKEY_TYPE,
+  OIDS_TO_SIG_ALGORITHM,
+  RSA_OIDS,
+} from "./constants"
 import { AsnParser } from "@peculiar/asn1-schema"
 import {
   AuthorityKeyIdentifier,
@@ -164,6 +171,45 @@ export function getRSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
   }
 }
 
+// TODO: Consider using a different term other than "key profile"
+export function getKeyProfile(cert: X509Certificate): string {
+  const spki = cert.tbsCertificate.subjectPublicKeyInfo
+  const publicKeyAlgOID = spki.algorithm.algorithm
+  const publicKeyType = OIDS_TO_PUBKEY_TYPE[publicKeyAlgOID] || publicKeyAlgOID
+
+  const sigAlgOID = cert.tbsCertificate.signature.algorithm
+  const sigAlg = OIDS_TO_SIG_ALGORITHM[sigAlgOID as keyof typeof OIDS_TO_SIG_ALGORITHM] ?? sigAlgOID
+
+  if (publicKeyType === "rsaEncryption") {
+    const rsaInfo = getRSAInfo(spki)
+    const keySize = rsaInfo.modulus.toString(2).length.toString()
+    if (sigAlg === "rsassa-pss") {
+      return `RSAPSS-${keySize}`
+    } else {
+      return `RSA-${keySize}`
+    }
+  } else if (publicKeyType === "ecPublicKey") {
+    const curve = getCurveName(AsnParser.parse(spki.algorithm.parameters!, ECParameters))
+    const pubkey = new Uint8Array(spki.subjectPublicKey)
+
+    // Ensure the key size is within the curve
+    // The first byte is 0x04, which is the prefix for uncompressed public keys so we get rid of it
+    const pubkeyX = BigInt(
+      "0x" + Buffer.from(pubkey.slice(1, pubkey.length / 2 + 1)).toString("hex"),
+    )
+    const pubkeyY = BigInt("0x" + Buffer.from(pubkey.slice(pubkey.length / 2 + 1)).toString("hex"))
+    const pubkeySizeX = pubkeyX.toString(2).length
+    const pubkeySizeY = pubkeyY.toString(2).length
+    const expectedKeySize = parseInt(curve.split("-")[1])
+    if (pubkeySizeX > expectedKeySize || pubkeySizeY > expectedKeySize) {
+      throw new Error(`Key size exceeds size of curve ${curve}`)
+    }
+    return curve
+  }
+  return `???`
+}
+
+// TODO: Return undefined instead of ""?
 export function getSignatureAlgorithmType(signatureAlgorithm: string): "RSA" | "ECDSA" | "" {
   if (signatureAlgorithm.toLowerCase().includes("rsa")) {
     return "RSA"
@@ -171,4 +217,15 @@ export function getSignatureAlgorithmType(signatureAlgorithm: string): "RSA" | "
     return "ECDSA"
   }
   return ""
+}
+
+export function getBitSizeFromCurve(curve: string): number {
+  const curveName = curve
+    .replace("brainpoolP", "")
+    .replace("nist", "")
+    .replace("-", "")
+    .replace("r1", "")
+    .replace("t1", "")
+    .toLowerCase()
+  return Number(curveName.replace("p", ""))
 }
