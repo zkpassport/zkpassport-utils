@@ -3714,6 +3714,20 @@ export const oids: OidMapping = {
   "2.23.136.1.1.6.2": { d: "documentTypeList", c: "X.509 extension" },
 }
 
+export const OIDS_TO_DESCRIPTION: Record<string, string> = {
+  "1.2.840.113549.1.1.1": "rsaEncryption",
+  "1.2.840.10045.2.1": "ecPublicKey",
+  "1.2.840.113549.1.1.5": "sha1-with-rsa-signature",
+  "1.2.840.113549.1.1.11": "sha256WithRSAEncryption",
+  "1.2.840.113549.1.1.12": "sha384WithRSAEncryption",
+  "1.2.840.113549.1.1.13": "sha512WithRSAEncryption",
+  "1.2.840.113549.1.1.10": "rsassa-pss",
+  "1.2.840.10045.4.1": "ecdsa-with-SHA1",
+  "1.2.840.10045.4.3.2": "ecdsa-with-SHA256",
+  "1.2.840.10045.4.3.3": "ecdsa-with-SHA384",
+  "1.2.840.10045.4.3.4": "ecdsa-with-SHA512",
+}
+
 // TODO: Consider overriding official OID name mapping to use these instead:
 // const OIDS_TO_DESCRIPTION: Record<string, string> = {
 //   "1.2.840.113549.1.1.1": "rsaEncryption",

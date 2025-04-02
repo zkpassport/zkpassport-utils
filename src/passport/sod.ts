@@ -1,7 +1,7 @@
 import { Binary } from "../binary"
 import { ASN } from "../cms/asn"
 import { AsnConvert, AsnParser, AsnSerializer } from "@peculiar/asn1-schema"
-import { decodeOID, getHashAlgorithmName, getOIDName } from "./oids"
+import { decodeOID, getHashAlgorithmName, getOIDName } from "../cms/oids"
 
 export type DigestAlgorithm = "SHA1" | "SHA224" | "SHA256" | "SHA384" | "SHA512"
 export type SignatureAlgorithm =

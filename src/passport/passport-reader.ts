@@ -10,7 +10,7 @@ import { AlgorithmIdentifier, SubjectPublicKeyInfo, TBSCertificate } from "@pecu
 import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "../cms/constants"
 import { DigestAlgorithm, SOD } from "./sod"
 import { ASN } from "../cms/asn"
-import { decodeOID } from "./oids"
+import { decodeOID } from "../cms/oids"
 import { getCurveName } from "../cms/utils"
 export class PassportReader {
   public dg1?: Binary

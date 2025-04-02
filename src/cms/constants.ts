@@ -32,7 +32,7 @@ export const RSA_OIDS = {
 }
 
 export const BRAINPOOL_CURVES = {
-  BrainpoolP160r1: {
+  brainpoolP160r1: {
     a: 0x340e7be2a280eb74e2be61bada745d97e8f7c300n,
     b: 0x1e589a8595423412134faa2dbdec95c8d8675e58n,
     n: 0xe95e4a5f737059dc60df5991d45029409e60fc09n,
