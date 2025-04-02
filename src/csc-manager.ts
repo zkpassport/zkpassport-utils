@@ -11,7 +11,7 @@ import { p384 } from "@noble/curves/p384"
 import { p521 } from "@noble/curves/p521"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
 import { Certificate, SignatureAlgorithm } from "./types"
-import { getECDSAInfo, getRSAInfo, getRSAPSSParams } from "./passport-reader"
+import { getECDSAInfo, getRSAInfo, getRSAPSSParams } from "./passport"
 import { getBitSizeFromCurve } from "./circuit-matcher"
 
 const OIDS_TO_DESCRIPTION: Record<string, string> = {
