@@ -14,6 +14,7 @@ import {
 } from "@peculiar/asn1-x509"
 import {
   BRAINPOOL_CURVES,
+  BRAINPOOL_CURVES_ABBR,
   CURVE_OIDS,
   HASH_OIDS,
   id_authorityKeyIdentifier,
@@ -64,7 +65,7 @@ export function getCurveName(ecParams: ECParameters): string {
       n == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].n &&
       p == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].p
     ) {
-      return key
+      return BRAINPOOL_CURVES_ABBR[key as keyof typeof BRAINPOOL_CURVES_ABBR]
     }
   }
   return `unknown curve`
