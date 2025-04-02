@@ -1,9 +1,9 @@
 export const HASH_OIDS = {
+  "1.3.14.3.2.26": "SHA-1",
   "2.16.840.1.101.3.4.2.1": "SHA-256",
   "2.16.840.1.101.3.4.2.2": "SHA-384",
   "2.16.840.1.101.3.4.2.3": "SHA-512",
   "2.16.840.1.101.3.4.2.4": "SHA-224",
-  "1.3.14.3.2.26": "SHA-1",
 }
 
 export const CURVE_OIDS = {
@@ -29,6 +29,34 @@ export const CURVE_OIDS = {
 export const RSA_OIDS = {
   "1.2.840.113549.1.1.1": "rsaEncryption",
   "1.2.840.113549.1.1.10": "rsassa-pss",
+}
+
+export const OIDS_TO_PUBKEY_TYPE: Record<string, string> = {
+  "1.2.840.113549.1.1.1": "rsaEncryption",
+  "1.2.840.10045.2.1": "ecPublicKey",
+}
+
+export const OIDS_TO_SIG_ALGORITHM: Record<string, string> = {
+  "1.2.840.113549.1.1.5": "sha1-with-rsa-signature",
+  "1.2.840.113549.1.1.11": "sha256WithRSAEncryption",
+  "1.2.840.113549.1.1.12": "sha384WithRSAEncryption",
+  "1.2.840.113549.1.1.13": "sha512WithRSAEncryption",
+  "1.2.840.113549.1.1.10": "rsassa-pss",
+  "1.2.840.10045.4.1": "ecdsa-with-SHA1",
+  "1.2.840.10045.4.3.2": "ecdsa-with-SHA256",
+  "1.2.840.10045.4.3.3": "ecdsa-with-SHA384",
+  "1.2.840.10045.4.3.4": "ecdsa-with-SHA512",
+}
+
+export const SIG_ALGORITHM_TO_HASH: Record<string, string> = {
+  "sha1-with-rsa-signature": "SHA-1",
+  "sha256WithRSAEncryption": "SHA-256",
+  "sha384WithRSAEncryption": "SHA-384",
+  "sha512WithRSAEncryption": "SHA-512",
+  "ecdsa-with-SHA1": "SHA-1",
+  "ecdsa-with-SHA256": "SHA-256",
+  "ecdsa-with-SHA384": "SHA-384",
+  "ecdsa-with-SHA512": "SHA-512",
 }
 
 export const BRAINPOOL_CURVES = {
@@ -116,4 +144,21 @@ export const BRAINPOOL_CURVES = {
     n: 0xaadd9db8dbe9c48b3fd4e6ae33c9fc07cb308db3b3c9d20ed6639cca70330870553e5c414ca92619418661197fac10471db1d381085ddaddb58796829ca90069n,
     p: 0xaadd9db8dbe9c48b3fd4e6ae33c9fc07cb308db3b3c9d20ed6639cca703308717d4d9b009bc66842aecda12ae6a380e62881ff2f2d82c68528aa6056583a48f3n,
   },
+}
+
+export const BRAINPOOL_CURVES_ABBR = {
+  brainpoolP160r1: "BP-R-160",
+  brainpoolP160t1: "BP-T-160",
+  brainpoolP192r1: "BP-R-192",
+  brainpoolP192t1: "BP-T-192",
+  brainpoolP224r1: "BP-R-224",
+  brainpoolP224t1: "BP-T-224",
+  brainpoolP256r1: "BP-R-256",
+  brainpoolP256t1: "BP-T-256",
+  brainpoolP320r1: "BP-R-320",
+  brainpoolP320t1: "BP-T-320",
+  brainpoolP384r1: "BP-R-384",
+  brainpoolP384t1: "BP-T-384",
+  brainpoolP512r1: "BP-R-512",
+  brainpoolP512t1: "BP-T-512",
 }

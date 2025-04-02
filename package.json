@@ -22,6 +22,12 @@
       "require": "./dist/cjs/binary/index.js",
       "default": "./dist/cjs/binary/index.js"
     },
+    "./cms": {
+      "types": "./dist/esm/cms/index.d.ts",
+      "import": "./dist/esm/cms/index.js",
+      "require": "./dist/cjs/cms/index.js",
+      "default": "./dist/cjs/cms/index.js"
+    },
     "./asn": {
       "types": "./dist/esm/cms/asn.d.ts",
       "import": "./dist/esm/cms/asn.js",
@@ -64,6 +70,12 @@
       "require": "./dist/cjs/merkle-tree/index.js",
       "default": "./dist/cjs/merkle-tree/index.js"
     },
+    "./passport-reader": {
+      "types": "./dist/esm/passport/index.d.ts",
+      "import": "./dist/esm/passport/index.js",
+      "require": "./dist/cjs/passport/index.js",
+      "default": "./dist/cjs/passport/index.js"
+    },
     "./passport": {
       "types": "./dist/esm/passport/index.d.ts",
       "import": "./dist/esm/passport/index.js",
@@ -95,6 +107,7 @@
   "scripts": {
     "prepublishOnly": "npm run test && npm run build",
     "build": "npm run build:esm && npm run build:cjs",
+    "build:watch": "tsc -p tsconfig.json --watch",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "test": "jest src"

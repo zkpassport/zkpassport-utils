@@ -2,7 +2,6 @@ import { AsnParser } from "@peculiar/asn1-schema"
 import { Certificate as X509Certificate } from "@peculiar/asn1-x509"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
 import { Certificate, SignatureAlgorithm } from "./types"
-import { getBitSizeFromCurve } from "./circuit-matcher"
 import { OIDS_TO_DESCRIPTION } from "./cms/oids"
 import {
   getECDSAInfo,
@@ -10,6 +9,7 @@ import {
   getRSAInfo,
   getRSAPSSParams,
   getSubjectKeyId,
+  getBitSizeFromCurve,
 } from "./cms/utils"
 import { getAuthorityKeyId } from "./cms/utils"
 
