@@ -25,6 +25,7 @@ import {
 } from "./constants"
 import type { DigestAlgorithm } from "./types"
 
+// TODO: Consider throwing an error or returning undefined if curve is not found
 export function getCurveName(ecParams: ECParameters): string {
   if (ecParams.namedCurve) {
     return CURVE_OIDS[ecParams.namedCurve as keyof typeof CURVE_OIDS] ?? ""
@@ -56,7 +57,6 @@ export function getCurveName(ecParams: ECParameters): string {
   ) {
     return "P-521"
   }
-
   for (const key in BRAINPOOL_CURVES) {
     if (
       a == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].a &&
@@ -67,8 +67,8 @@ export function getCurveName(ecParams: ECParameters): string {
       return key
     }
   }
-
   return `unknown curve`
+  throw new Error(`Unknown curve: ${a}, ${b}, ${n}, ${p}`)
 }
 
 export function getAuthorityKeyId(cert: X509Certificate): string | undefined {
@@ -208,7 +208,7 @@ export function getKeyProfile(cert: X509Certificate): string {
   return `???`
 }
 
-// TODO: Return undefined instead of ""?
+// TODO: Consider throwing and error or returning undefined instead of ""?
 export function getSignatureAlgorithmType(signatureAlgorithm: string): "RSA" | "ECDSA" | "" {
   if (signatureAlgorithm.toLowerCase().includes("rsa")) {
     return "RSA"
@@ -274,4 +274,12 @@ export function formatAbbreviatedDN(issuer: any[]): string {
         .join(", "),
     )
     .join(", ")
+}
+
+// Convert DER to PEM format
+export function derToPem(der: Uint8Array): string {
+  return `-----BEGIN CERTIFICATE-----\n${Buffer.from(der)
+    .toString("base64")
+    .match(/.{1,64}/g)
+    ?.join("\n")}\n-----END CERTIFICATE-----`
 }

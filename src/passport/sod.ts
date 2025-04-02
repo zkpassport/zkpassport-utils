@@ -1,6 +1,7 @@
-import { Binary } from "../binary"
-import { ASN } from "../cms/asn"
+import { ContentInfo, SignedData } from "@peculiar/asn1-cms"
 import { AsnConvert, AsnParser, AsnSerializer } from "@peculiar/asn1-schema"
+import { Binary } from "../binary"
+import { AttributeSet, LDSSecurityObject } from "../cms/asn"
 import { decodeOID, getHashAlgorithmName, getOIDName } from "../cms/oids"
 import type { DigestAlgorithm, SignatureAlgorithm } from "../cms/types"
 
@@ -263,12 +264,12 @@ export class SOD implements SODSignedData {
   static fromDER(der: Binary): SOD {
     der = der.slice(0, 2).equals(Binary.from([119, 130])) ? der.slice(4) : der
 
-    const contentInfo = AsnParser.parse(der.toUInt8Array(), ASN.ContentInfo)
-    const signedData = AsnParser.parse(contentInfo.content, ASN.SignedData)
+    const contentInfo = AsnParser.parse(der.toUInt8Array(), ContentInfo)
+    const signedData = AsnParser.parse(contentInfo.content, SignedData)
     if (!signedData.encapContentInfo?.eContent?.single) throw new Error("No eContent found")
     const eContent = AsnConvert.parse(
       signedData.encapContentInfo?.eContent?.single,
-      ASN.LDSSecurityObject,
+      LDSSecurityObject,
     )
     const cert = signedData.certificates?.[0]?.certificate
     if (!cert) throw new Error("No DSC certificate found")
@@ -281,7 +282,7 @@ export class SOD implements SODSignedData {
       signerInfo.signedAttrs.map((v) => [getOIDName(v.attrType), Binary.from(v.attrValues[0])]),
     )
     // Reconstruct signed attributes using AttributeSet to get the correct bytes that are signed
-    const reconstructedSignedAttrs = new ASN.AttributeSet(signerInfo.signedAttrs.map((v) => v))
+    const reconstructedSignedAttrs = new AttributeSet(signerInfo.signedAttrs.map((v) => v))
     const messageDigest = signedAttrsMap.get("messageDigest")
     if (!messageDigest) throw new Error("No signedAttrs.messageDigest found")
     const signingTime = signedAttrsMap.get("signingTime")

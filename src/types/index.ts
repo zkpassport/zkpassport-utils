@@ -2,6 +2,7 @@ import type { Alpha3Code } from "i18n-iso-countries"
 import type { SOD } from "../passport"
 import type { CountryName } from "./countries"
 import type { DigestAlgorithm, SignatureAlgorithm } from "../cms/types"
+export type { DigestAlgorithm, SignatureAlgorithm }
 
 export type SavedPassport = {
   id: string
