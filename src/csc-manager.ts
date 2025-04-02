@@ -1,14 +1,5 @@
 import { AsnParser } from "@peculiar/asn1-schema"
-import {
-  PrivateKeyUsagePeriod,
-  TBSCertificate,
-  Certificate as X509Certificate,
-} from "@peculiar/asn1-x509"
-import { ECParameters } from "@peculiar/asn1-ecc"
-import { RSAPublicKey } from "@peculiar/asn1-rsa"
-import { p256 } from "@noble/curves/p256"
-import { p384 } from "@noble/curves/p384"
-import { p521 } from "@noble/curves/p521"
+import { PrivateKeyUsagePeriod, Certificate as X509Certificate } from "@peculiar/asn1-x509"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
 import { Certificate, SignatureAlgorithm } from "./types"
 import { getECDSAInfo, getRSAInfo, getRSAPSSParams } from "./passport"
@@ -133,52 +124,6 @@ const BRAINPOOL_CURVES = {
     n: 0xaadd9db8dbe9c48b3fd4e6ae33c9fc07cb308db3b3c9d20ed6639cca70330870553e5c414ca92619418661197fac10471db1d381085ddaddb58796829ca90069n,
     p: 0xaadd9db8dbe9c48b3fd4e6ae33c9fc07cb308db3b3c9d20ed6639cca703308717d4d9b009bc66842aecda12ae6a380e62881ff2f2d82c68528aa6056583a48f3n,
   },
-}
-
-export function getCurveName(ecParams: ECParameters): string {
-  if (ecParams.namedCurve) {
-    return CURVE_OIDS[ecParams.namedCurve as keyof typeof CURVE_OIDS] ?? ""
-  }
-  if (!ecParams.specifiedCurve) {
-    return ""
-  }
-  const a = BigInt(`0x${Buffer.from(ecParams.specifiedCurve.curve.a).toString("hex")}`)
-  const b = BigInt(`0x${Buffer.from(ecParams.specifiedCurve.curve.b).toString("hex")}`)
-  const n = BigInt(`0x${Buffer.from(ecParams.specifiedCurve.order).toString("hex")}`)
-  const p = BigInt(
-    `0x${Buffer.from(ecParams.specifiedCurve.fieldID.parameters.slice(2)).toString("hex")}`,
-  )
-
-  if (a == p256.CURVE.a && b == p256.CURVE.b && n == p256.CURVE.n && p == p256.CURVE.Fp.ORDER) {
-    return "P-256"
-  } else if (
-    a == p384.CURVE.a &&
-    b == p384.CURVE.b &&
-    n == p384.CURVE.n &&
-    p == p384.CURVE.Fp.ORDER
-  ) {
-    return "P-384"
-  } else if (
-    a == p521.CURVE.a &&
-    b == p521.CURVE.b &&
-    n == p521.CURVE.n &&
-    p == p521.CURVE.Fp.ORDER
-  ) {
-    return "P-521"
-  }
-
-  for (const key in BRAINPOOL_CURVES) {
-    if (
-      a == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].a &&
-      b == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].b &&
-      n == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].n &&
-      p == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].p
-    ) {
-      return key
-    }
-  }
-
-  return `unknown curve`
 }
 
 export function parseCertificate(content: Buffer | string): Certificate {

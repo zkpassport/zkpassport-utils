@@ -22,6 +22,12 @@
       "require": "./dist/cjs/binary/index.js",
       "default": "./dist/cjs/binary/index.js"
     },
+    "./asn": {
+      "types": "./dist/esm/cms/asn.d.ts",
+      "import": "./dist/esm/cms/asn.js",
+      "require": "./dist/cjs/cms/asn.js",
+      "default": "./dist/cjs/cms/asn.js"
+    },
     "./country": {
       "types": "./dist/esm/country/country.d.ts",
       "import": "./dist/esm/country/country.js",

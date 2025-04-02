@@ -5,11 +5,11 @@ import {
   ContentInfo as AsnContentInfo,
   DigestAlgorithmIdentifier as AsnDigestAlgorithmIdentifier,
   EncapsulatedContent as ASNEncapsulatedContent,
-  SignedAttributes as AsnSignedAttributes,
   SignedData as AsnSignedData,
   SignerIdentifier as AsnSignerIdentifier,
   SignerInfo as AsnSignerInfo,
 } from "@peculiar/asn1-cms"
+import type { SignedAttributes as AsnSignedAttributes } from "@peculiar/asn1-cms"
 
 export namespace ASN {
   export const Attribute = AsnAttribute
@@ -167,7 +167,31 @@ export namespace ASN {
       Object.assign(this, params)
     }
   }
+
+  /**
+   * ICAO Master List structure
+   *
+   * ```asn
+   * MasterList ::= SEQUENCE {
+   *   version INTEGER,
+   *   certificates SET OF Certificate
+   * }
+   * ```
+   */
+  @AsnType({ type: AsnTypeTypes.Sequence })
+  export class MasterList {
+    @AsnProp({ type: AsnPropTypes.Integer })
+    public version: number = 0
+
+    @AsnProp({ type: ASN.Certificate, repeated: "set" })
+    public certificates: ASN.Certificate[] = []
+
+    constructor(params: Partial<MasterList> = {}) {
+      Object.assign(this, params)
+    }
+  }
 }
 
 export const id_ldsSecurityObject = "2.23.136.1.1.1"
 export const id_sha256 = "2.16.840.1.101.3.4.2.1"
+export const id_icao_cscaMasterList = "2.23.136.1.1.2"
