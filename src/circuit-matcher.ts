@@ -38,7 +38,7 @@ import {
   getECDSAInfo,
   getRSAInfo,
   getSodSignatureAlgorithmType,
-} from "./passport-reader/passport-reader"
+} from "./passport/passport-reader"
 import {
   bigintToBytes,
   bigintToNumber,
@@ -51,7 +51,7 @@ import {
 import { parseDate } from "./circuits/disclose"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
 import { sha256 } from "@noble/hashes/sha256"
-import { DigestAlgorithm } from "./passport-reader/sod"
+import { DigestAlgorithm } from "./passport/sod"
 
 const SUPPORTED_HASH_ALGORITHMS: DigestAlgorithm[] = ["SHA256", "SHA384", "SHA512"]
 

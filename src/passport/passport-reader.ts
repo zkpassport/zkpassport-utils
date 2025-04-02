@@ -9,7 +9,7 @@ import { AsnParser } from "@peculiar/asn1-schema"
 import { AlgorithmIdentifier, SubjectPublicKeyInfo, TBSCertificate } from "@peculiar/asn1-x509"
 import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "./constants"
 import { DigestAlgorithm, SOD } from "./sod"
-import { ASN } from "./asn"
+import { ASN } from "../cms/asn"
 import { decodeOID } from "./oids"
 
 export class PassportReader {

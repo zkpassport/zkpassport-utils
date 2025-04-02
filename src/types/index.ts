@@ -1,7 +1,7 @@
 import type { Alpha3Code } from "i18n-iso-countries"
-import type { SOD } from "../passport-reader"
+import type { SOD } from "../passport"
 import type { CountryName } from "./countries"
-import { DigestAlgorithm } from "@/passport-reader/sod"
+import { DigestAlgorithm } from "@/passport/sod"
 
 export type SavedPassport = {
   id: string

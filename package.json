@@ -22,6 +22,12 @@
       "require": "./dist/cjs/binary/index.js",
       "default": "./dist/cjs/binary/index.js"
     },
+    "./country": {
+      "types": "./dist/esm/country/country.d.ts",
+      "import": "./dist/esm/country/country.js",
+      "require": "./dist/cjs/country/country.js",
+      "default": "./dist/cjs/country/country.js"
+    },
     "./rsa": {
       "types": "./dist/esm/rsa.d.ts",
       "import": "./dist/esm/rsa.js",
@@ -52,11 +58,11 @@
       "require": "./dist/cjs/merkle-tree/index.js",
       "default": "./dist/cjs/merkle-tree/index.js"
     },
-    "./passport-reader": {
-      "types": "./dist/esm/passport-reader/index.d.ts",
-      "import": "./dist/esm/passport-reader/index.js",
-      "require": "./dist/cjs/passport-reader/index.js",
-      "default": "./dist/cjs/passport-reader/index.js"
+    "./passport": {
+      "types": "./dist/esm/passport/index.d.ts",
+      "import": "./dist/esm/passport/index.js",
+      "require": "./dist/cjs/passport/index.js",
+      "default": "./dist/cjs/passport/index.js"
     },
     "./utils": {
       "types": "./dist/esm/utils.d.ts",

@@ -1,5 +1,5 @@
 import { Binary } from "../binary"
-import { ASN } from "./asn"
+import { ASN } from "../cms/asn"
 import { AsnConvert, AsnParser, AsnSerializer } from "@peculiar/asn1-schema"
 import { decodeOID, getHashAlgorithmName, getOIDName } from "./oids"
 
