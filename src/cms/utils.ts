@@ -1,30 +1,29 @@
-import { ECParameters } from "@peculiar/asn1-ecc"
 import { p256 } from "@noble/curves/p256"
 import { p384 } from "@noble/curves/p384"
 import { p521 } from "@noble/curves/p521"
+import { ECParameters } from "@peculiar/asn1-ecc"
+import { RSAPublicKey, RsaSaPssParams } from "@peculiar/asn1-rsa"
+import { AsnParser } from "@peculiar/asn1-schema"
+import {
+  AlgorithmIdentifier,
+  AuthorityKeyIdentifier,
+  PrivateKeyUsagePeriod,
+  SubjectKeyIdentifier,
+  SubjectPublicKeyInfo,
+  Certificate as X509Certificate,
+} from "@peculiar/asn1-x509"
 import {
   BRAINPOOL_CURVES,
   CURVE_OIDS,
   HASH_OIDS,
+  id_authorityKeyIdentifier,
+  id_privateKeyUsagePeriod,
+  id_subjectKeyIdentifier,
   OIDS_TO_PUBKEY_TYPE,
   OIDS_TO_SIG_ALGORITHM,
   RSA_OIDS,
 } from "./constants"
-import { AsnParser } from "@peculiar/asn1-schema"
-import {
-  AuthorityKeyIdentifier,
-  PrivateKeyUsagePeriod,
-  SubjectKeyIdentifier,
-  Certificate as X509Certificate,
-} from "@peculiar/asn1-x509"
-import { RSAPublicKey, RsaSaPssParams } from "@peculiar/asn1-rsa"
-import { AlgorithmIdentifier, SubjectPublicKeyInfo } from "@peculiar/asn1-x509"
-import { DigestAlgorithm } from "./types"
-import {
-  id_authorityKeyIdentifier,
-  id_privateKeyUsagePeriod,
-  id_subjectKeyIdentifier,
-} from "./oids"
+import type { DigestAlgorithm } from "./types"
 
 export function getCurveName(ecParams: ECParameters): string {
   if (ecParams.namedCurve) {
@@ -228,4 +227,51 @@ export function getBitSizeFromCurve(curve: string): number {
     .replace("t1", "")
     .toLowerCase()
   return Number(curveName.replace("p", ""))
+}
+
+export function getCertificateIssuer(cert: X509Certificate): string | undefined {
+  return formatAbbreviatedDN(cert.tbsCertificate.issuer)
+}
+
+export function getCertificateSubject(cert: X509Certificate): string | undefined {
+  return formatAbbreviatedDN(cert.tbsCertificate.subject)
+}
+
+export function getCertificateIssuerCountry(cert: X509Certificate): string | undefined {
+  for (const rdn of cert.tbsCertificate.subject) {
+    for (const attr of rdn) {
+      if (attr.type === "2.5.4.6") {
+        const countryCode = attr.value.toString().toUpperCase()
+        return countryCode
+      }
+    }
+  }
+}
+
+// Map OIDs to their abbreviated names according to RFC 4514 and X.520
+export function formatAbbreviatedDN(issuer: any[]): string {
+  const abbreviations: Record<string, string> = {
+    "1.2.840.113549.1.9.1": "emailAddress", // emailAddress
+    "2.5.4.10": "O", // organizationName
+    "2.5.4.11": "OU", // organizationalUnitName
+    "2.5.4.17": "postalCode", // postalCode
+    "2.5.4.20": "telephoneNumber", // telephoneNumber
+    "2.5.4.3": "CN", // commonName
+    "2.5.4.4": "SN", // surname
+    "2.5.4.5": "serialNumber", // serialNumber
+    "2.5.4.6": "C", // countryName
+    "2.5.4.7": "L", // localityName
+    "2.5.4.8": "ST", // stateOrProvinceName
+    "2.5.4.9": "street", // streetAddress
+  }
+  return issuer
+    .map((i) =>
+      i
+        .map(
+          (j: { type: string; value: { toString: () => any } }) =>
+            `${abbreviations[j.type] || j.type}=${j.value}`,
+        )
+        .join(", "),
+    )
+    .join(", ")
 }

@@ -48,6 +48,21 @@ export const OIDS_TO_SIG_ALGORITHM: Record<string, string> = {
   "1.2.840.10045.4.3.4": "ecdsa-with-SHA512",
 }
 
+// TODO: Consider merging with OIDS_TO_SIG_ALGORITHM
+export const OIDS_TO_DESCRIPTION: Record<string, string> = {
+  "1.2.840.113549.1.1.1": "rsaEncryption",
+  "1.2.840.10045.2.1": "ecPublicKey",
+  "1.2.840.113549.1.1.5": "sha1-with-rsa-signature",
+  "1.2.840.113549.1.1.11": "sha256WithRSAEncryption",
+  "1.2.840.113549.1.1.12": "sha384WithRSAEncryption",
+  "1.2.840.113549.1.1.13": "sha512WithRSAEncryption",
+  "1.2.840.113549.1.1.10": "rsassa-pss",
+  "1.2.840.10045.4.1": "ecdsa-with-SHA1",
+  "1.2.840.10045.4.3.2": "ecdsa-with-SHA256",
+  "1.2.840.10045.4.3.3": "ecdsa-with-SHA384",
+  "1.2.840.10045.4.3.4": "ecdsa-with-SHA512",
+}
+
 export const SIG_ALGORITHM_TO_HASH: Record<string, string> = {
   "sha1-with-rsa-signature": "SHA-1",
   "sha256WithRSAEncryption": "SHA-256",
@@ -162,3 +177,7 @@ export const BRAINPOOL_CURVES_ABBR = {
   brainpoolP512r1: "BP-R-512",
   brainpoolP512t1: "BP-T-512",
 }
+
+export const id_authorityKeyIdentifier = "2.5.29.35"
+export const id_subjectKeyIdentifier = "2.5.29.14"
+export const id_privateKeyUsagePeriod = "2.5.29.16"
