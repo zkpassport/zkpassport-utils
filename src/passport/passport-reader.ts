@@ -7,11 +7,11 @@ import { ECParameters } from "@peculiar/asn1-ecc"
 import { RSAPublicKey, RsaSaPssParams } from "@peculiar/asn1-rsa"
 import { AsnParser } from "@peculiar/asn1-schema"
 import { AlgorithmIdentifier, SubjectPublicKeyInfo, TBSCertificate } from "@peculiar/asn1-x509"
-import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "./constants"
+import { BRAINPOOL_CURVES, CURVE_OIDS, HASH_OIDS, RSA_OIDS } from "../cms/constants"
 import { DigestAlgorithm, SOD } from "./sod"
 import { ASN } from "../cms/asn"
 import { decodeOID } from "./oids"
-
+import { getCurveName } from "../cms/utils"
 export class PassportReader {
   public dg1?: Binary
   public sod?: SOD
@@ -125,50 +125,6 @@ function fromBytesToBigInt(bytes: number[]): bigint {
 
 function fromArrayBufferToBigInt(buffer: ArrayBuffer): bigint {
   return BigInt("0x" + Buffer.from(buffer).toString("hex"))
-}
-
-export function getCurveName(ecParams: ECParameters): string {
-  if (ecParams.namedCurve) {
-    return CURVE_OIDS[ecParams.namedCurve as keyof typeof CURVE_OIDS] ?? ""
-  }
-  if (!ecParams.specifiedCurve) {
-    return ""
-  }
-  const a = fromArrayBufferToBigInt(ecParams.specifiedCurve.curve.a)
-  const b = fromArrayBufferToBigInt(ecParams.specifiedCurve.curve.b)
-  const n = fromArrayBufferToBigInt(ecParams.specifiedCurve.order)
-  const p = fromArrayBufferToBigInt(ecParams.specifiedCurve.fieldID.parameters.slice(2))
-
-  if (a == p256.CURVE.a && b == p256.CURVE.b && n == p256.CURVE.n && p == p256.CURVE.Fp.ORDER) {
-    return "P-256"
-  } else if (
-    a == p384.CURVE.a &&
-    b == p384.CURVE.b &&
-    n == p384.CURVE.n &&
-    p == p384.CURVE.Fp.ORDER
-  ) {
-    return "P-384"
-  } else if (
-    a == p521.CURVE.a &&
-    b == p521.CURVE.b &&
-    n == p521.CURVE.n &&
-    p == p521.CURVE.Fp.ORDER
-  ) {
-    return "P-521"
-  }
-
-  for (const key in BRAINPOOL_CURVES) {
-    if (
-      a == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].a &&
-      b == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].b &&
-      n == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].n &&
-      p == BRAINPOOL_CURVES[key as keyof typeof BRAINPOOL_CURVES].p
-    ) {
-      return key
-    }
-  }
-
-  return `unknown curve`
 }
 
 export function getECDSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
