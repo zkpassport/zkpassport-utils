@@ -12,6 +12,7 @@ import { DigestAlgorithm, SOD } from "./sod"
 import { ASN } from "../cms/asn"
 import { decodeOID } from "../cms/oids"
 import { getCurveName } from "../cms/utils"
+
 export class PassportReader {
   public dg1?: Binary
   public sod?: SOD
@@ -117,64 +118,6 @@ export function extractTBS(passport: PassportViewModel): TBSCertificate | null {
     ? signedData.certificates[0]?.certificate?.tbsCertificate
     : null
   return tbsCertificate ?? null
-}
-
-function fromBytesToBigInt(bytes: number[]): bigint {
-  return BigInt("0x" + Buffer.from(bytes).toString("hex"))
-}
-
-function fromArrayBufferToBigInt(buffer: ArrayBuffer): bigint {
-  return BigInt("0x" + Buffer.from(buffer).toString("hex"))
-}
-
-export function getECDSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
-  curve: string
-  publicKey: Uint8Array
-} {
-  const parsedParams = AsnParser.parse(subjectPublicKeyInfo.algorithm.parameters!, ECParameters)
-  return {
-    curve: getCurveName(parsedParams),
-    publicKey: new Uint8Array(subjectPublicKeyInfo.subjectPublicKey),
-  }
-}
-
-export function getRSAPSSParams(signatureAlgorithm: AlgorithmIdentifier): {
-  hashAlgorithm: DigestAlgorithm
-  saltLength: number
-  maskGenAlgorithm: string
-} {
-  const parsedKey = AsnParser.parse(signatureAlgorithm.parameters!, RsaSaPssParams)
-  const hashAlgorithm = HASH_OIDS[parsedKey.hashAlgorithm.algorithm as keyof typeof HASH_OIDS] ?? ""
-  const maskGenAlgorithm =
-    HASH_OIDS[parsedKey.maskGenAlgorithm.algorithm as keyof typeof HASH_OIDS] ?? ""
-  return {
-    hashAlgorithm: hashAlgorithm.replace("SHA-", "SHA") as DigestAlgorithm,
-    saltLength: parsedKey.saltLength,
-    maskGenAlgorithm,
-  }
-}
-
-export function getRSAInfo(subjectPublicKeyInfo: SubjectPublicKeyInfo): {
-  modulus: bigint
-  exponent: bigint
-  type: "pkcs" | "pss"
-} {
-  const parsedKey = AsnParser.parse(subjectPublicKeyInfo.subjectPublicKey!, RSAPublicKey)
-  const type = RSA_OIDS[subjectPublicKeyInfo.algorithm.algorithm as keyof typeof RSA_OIDS] ?? ""
-  return {
-    modulus: fromArrayBufferToBigInt(parsedKey.modulus),
-    exponent: fromArrayBufferToBigInt(parsedKey.publicExponent),
-    type: type.includes("pss") ? "pss" : "pkcs",
-  }
-}
-
-export function getSignatureAlgorithmType(signatureAlgorithm: string): "RSA" | "ECDSA" | "" {
-  if (signatureAlgorithm.toLowerCase().includes("rsa")) {
-    return "RSA"
-  } else if (signatureAlgorithm.toLowerCase().includes("ecdsa")) {
-    return "ECDSA"
-  }
-  return ""
 }
 
 export function getSodSignatureAlgorithmType(passport: PassportViewModel): "RSA" | "ECDSA" | "" {

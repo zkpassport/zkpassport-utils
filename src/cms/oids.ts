@@ -3808,3 +3808,7 @@ export function decodeOID(bytes: number[]): string {
   }
   return values.join(".")
 }
+
+export const id_authorityKeyIdentifier = "2.5.29.35"
+export const id_subjectKeyIdentifier = "2.5.29.14"
+export const id_privateKeyUsagePeriod = "2.5.29.16"

@@ -1,10 +1,17 @@
 import { AsnParser } from "@peculiar/asn1-schema"
-import { PrivateKeyUsagePeriod, Certificate as X509Certificate } from "@peculiar/asn1-x509"
+import { Certificate as X509Certificate } from "@peculiar/asn1-x509"
 import { alpha2ToAlpha3, Alpha3Code } from "i18n-iso-countries"
 import { Certificate, SignatureAlgorithm } from "./types"
-import { getECDSAInfo, getRSAInfo, getRSAPSSParams } from "./passport"
 import { getBitSizeFromCurve } from "./circuit-matcher"
 import { OIDS_TO_DESCRIPTION } from "./cms/oids"
+import {
+  getECDSAInfo,
+  getPrivateKeyUsagePeriod,
+  getRSAInfo,
+  getRSAPSSParams,
+  getSubjectKeyId,
+} from "./cms/utils"
+import { getAuthorityKeyId } from "./cms/utils"
 
 export function parseCertificate(content: Buffer | string): Certificate {
   if (typeof content === "string") {
@@ -143,46 +150,4 @@ export function parseCertificates(pemContent: string): Certificate[] {
   }
 
   return certificates
-}
-
-function getAuthorityKeyId(cert: X509Certificate): string | undefined {
-  const authKeyExt = cert.tbsCertificate.extensions?.find(
-    (ext) => ext.extnID === "2.5.29.35", // Authority Key Identifier OID
-  )
-
-  if (authKeyExt?.extnValue) {
-    // Remove the first two bytes of the authority key identifier
-    return `0x${Buffer.from(authKeyExt.extnValue.buffer.slice(2)).toString("hex")}`
-  }
-  return undefined
-}
-
-function getSubjectKeyId(cert: X509Certificate): string | undefined {
-  const subjKeyExt = cert.tbsCertificate.extensions?.find(
-    (ext) => ext.extnID === "2.5.29.14", // Subject Key Identifier OID
-  )
-
-  if (subjKeyExt?.extnValue) {
-    // Remove the first two bytes of the subject key identifier
-    return `0x${Buffer.from(subjKeyExt.extnValue.buffer.slice(2)).toString("hex")}`
-  }
-  return undefined
-}
-
-// Helper function to get Private Key Usage Period
-function getPrivateKeyUsagePeriod(
-  cert: X509Certificate,
-): { not_before?: number; not_after?: number } | undefined {
-  const pkupExt = cert.tbsCertificate.extensions?.find(
-    (ext) => ext.extnID === "2.5.29.16", // Private Key Usage Period OID
-  )
-
-  if (pkupExt?.extnValue) {
-    const pkup = AsnParser.parse(pkupExt.extnValue, PrivateKeyUsagePeriod)
-    return {
-      not_before: pkup.notBefore ? Math.floor(pkup.notBefore.getTime() / 1000) : undefined,
-      not_after: pkup.notAfter ? Math.floor(pkup.notAfter.getTime() / 1000) : undefined,
-    }
-  }
-  return undefined
 }
