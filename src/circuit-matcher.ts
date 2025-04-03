@@ -403,7 +403,8 @@ export async function getDSCCircuitInputs(
 
 export async function getIDDataCircuitInputs(
   passport: PassportViewModel,
-  salt: bigint,
+  saltIn: bigint,
+  saltOut: bigint,
 ): Promise<any> {
   const idData = getIDDataInputs(passport)
   const maxTbsLength = getTBSMaxLen(passport)
@@ -411,7 +412,7 @@ export async function getIDDataCircuitInputs(
   if (!dscData || !idData) return null
 
   const commIn = await hashSaltCountryTbs(
-    salt,
+    saltIn,
     getDSCCountry(passport),
     Binary.from(passport.tbsCertificate),
     maxTbsLength,
@@ -422,7 +423,8 @@ export async function getIDDataCircuitInputs(
     signed_attributes: idData.signed_attributes,
     signed_attributes_size: idData.signed_attributes_size,
     comm_in: commIn.toHex(),
-    salt: `0x${salt.toString(16)}`,
+    salt_in: `0x${saltIn.toString(16)}`,
+    salt_out: `0x${saltOut.toString(16)}`,
   }
 
   const signatureAlgorithm = getSodSignatureAlgorithmType(passport)
@@ -460,7 +462,8 @@ export function getDSCCountry(passport: PassportViewModel): string {
 
 export async function getIntegrityCheckCircuitInputs(
   passport: PassportViewModel,
-  salt: bigint,
+  saltIn: bigint,
+  saltOut: bigint,
 ): Promise<any> {
   const maxTbsLength = getTBSMaxLen(passport)
   const dscData = getDSCDataInputs(passport, maxTbsLength)
@@ -473,7 +476,7 @@ export async function getIntegrityCheckCircuitInputs(
     Binary.from(processSodSignature(passport?.sodSignature ?? [], passport)),
   )
   const comm_in = await hashSaltCountrySignedAttrDg1PrivateNullifier(
-    salt,
+    saltIn,
     getDSCCountry(passport),
     Binary.from(passport.signedAttributes).padEnd(SIGNED_ATTR_INPUT_SIZE),
     BigInt(passport.signedAttributes.length),
@@ -491,7 +494,8 @@ export async function getIntegrityCheckCircuitInputs(
     dg1_offset_in_e_content: idData.dg1_offset_in_e_content,
     comm_in: comm_in.toHex(),
     private_nullifier: privateNullifier.toHex(),
-    salt: `0x${salt.toString(16)}`,
+    salt_in: `0x${saltIn.toString(16)}`,
+    salt_out: `0x${saltOut.toString(16)}`,
   }
 }
 
