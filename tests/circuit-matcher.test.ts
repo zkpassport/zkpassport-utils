@@ -26,7 +26,7 @@ import rootCerts from "./fixtures/root-certs.json"
 import { PASSPORTS } from "./fixtures/passports"
 import * as fs from "fs"
 import * as path from "path"
-import { Binary, getCurveName, getDSCSignatureHashAlgorithm } from "../src"
+import { Binary, getCurveName, getDSCSignatureHashAlgorithm, getSanctionsExclusionCheckCircuitInputs, SanctionsBuilder } from "../src"
 import { DSC } from "../src/passport/dsc"
 import { AsnParser } from "@peculiar/asn1-schema"
 import { AuthorityKeyIdentifier } from "@peculiar/asn1-x509"
@@ -48,12 +48,17 @@ function getDSCs() {
 
 const EXPECTED_NULLIFIER = "0x2fa89c11a1035d4eed0a92e5b0bbc5d0ab78a5749cf3b402f8a2896b9cc8b8a3";
 
+// Global constants
 const SALT = 1n;
 const EXPECTED_SALT = "0x1";
 const SERVICE_SCOPE = 2n;
 const EXPECTED_SERVICE_SCOPE = "0x2";
 const SERVICE_SUBSCOPE = 3n;
 const EXPECTED_SERVICE_SUBSCOPE = "0x3";
+
+// Mary
+const EXPECTED_MARY_NULLIFIER = "0x287e4139c68b178bde9d7e2b1ef3a63df1ffe3283d80c0ae3b4f4b7b88b5a1b6";
+const EXPECTED_MARY_COMM_IN = "0x0aa7611a314621850d217b19928af38909443d8b6bb5f2dee6907243d6f80c16";
 
 describe("Circuit Matcher - General", () => {
 
@@ -624,7 +629,7 @@ describe("Circuit Matcher - ECDSA", () => {
       e_content_size: 98,
       dg1_offset_in_e_content: 27,
       comm_in: "0x11557e9744e81d78af2760ee744c96789fe3aca92e3ea6dcf0a2d4b30bfc5a6d",
-      private_nullifier: "0x287e4139c68b178bde9d7e2b1ef3a63df1ffe3283d80c0ae3b4f4b7b88b5a1b6",
+      private_nullifier: EXPECTED_MARY_NULLIFIER,
       salt_in: EXPECTED_SALT,
       salt_out: EXPECTED_SALT,
     })
@@ -663,8 +668,8 @@ describe("Circuit Matcher - ECDSA", () => {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       ],
-      comm_in: "0x0aa7611a314621850d217b19928af38909443d8b6bb5f2dee6907243d6f80c16",
-      private_nullifier: "0x287e4139c68b178bde9d7e2b1ef3a63df1ffe3283d80c0ae3b4f4b7b88b5a1b6",
+      comm_in: EXPECTED_MARY_COMM_IN,
+      private_nullifier: EXPECTED_MARY_NULLIFIER,
       service_scope: EXPECTED_SERVICE_SCOPE,
       service_subscope: EXPECTED_SERVICE_SUBSCOPE,
       salt: EXPECTED_SALT,
@@ -684,8 +689,8 @@ describe("Circuit Matcher - ECDSA", () => {
     expect(result).toEqual({
       dg1: rightPadArrayWithZeros(PASSPORTS.mary.dataGroups[0].value, 95),
       current_date: format(new Date(), "yyyyMMdd"),
-      comm_in: "0x0aa7611a314621850d217b19928af38909443d8b6bb5f2dee6907243d6f80c16",
-      private_nullifier: "0x287e4139c68b178bde9d7e2b1ef3a63df1ffe3283d80c0ae3b4f4b7b88b5a1b6",
+      comm_in: EXPECTED_MARY_COMM_IN,
+      private_nullifier: EXPECTED_MARY_NULLIFIER,
       service_scope: EXPECTED_SERVICE_SCOPE,
       service_subscope: EXPECTED_SERVICE_SUBSCOPE,
       salt: EXPECTED_SALT,
@@ -702,8 +707,8 @@ describe("Circuit Matcher - ECDSA", () => {
     expect(result).toEqual({
       dg1: rightPadArrayWithZeros(PASSPORTS.mary.dataGroups[0].value, 95),
       country_list: rightPadCountryCodeArray(["ZKR", "FRA", "GBR", "USA"], 200),
-      comm_in: "0x0aa7611a314621850d217b19928af38909443d8b6bb5f2dee6907243d6f80c16",
-      private_nullifier: "0x287e4139c68b178bde9d7e2b1ef3a63df1ffe3283d80c0ae3b4f4b7b88b5a1b6",
+      comm_in: EXPECTED_MARY_COMM_IN,
+      private_nullifier: EXPECTED_MARY_NULLIFIER,
       service_scope: EXPECTED_SERVICE_SCOPE,
       service_subscope: EXPECTED_SERVICE_SUBSCOPE,
       salt: EXPECTED_SALT,
@@ -721,8 +726,8 @@ describe("Circuit Matcher - ECDSA", () => {
       country_list: rightPadCountryCodeArray(["FRA", "GBR", "USA"], 200).map((country) =>
         getCountryWeightedSum(country as Alpha3Code),
       ),
-      comm_in: "0x0aa7611a314621850d217b19928af38909443d8b6bb5f2dee6907243d6f80c16",
-      private_nullifier: "0x287e4139c68b178bde9d7e2b1ef3a63df1ffe3283d80c0ae3b4f4b7b88b5a1b6",
+      comm_in: EXPECTED_MARY_COMM_IN,
+      private_nullifier: EXPECTED_MARY_NULLIFIER,
       service_scope: EXPECTED_SERVICE_SCOPE,
       service_subscope: EXPECTED_SERVICE_SUBSCOPE,
       salt: EXPECTED_SALT,
@@ -737,8 +742,8 @@ describe("Circuit Matcher - ECDSA", () => {
     expect(result).toEqual({
       dg1: rightPadArrayWithZeros(PASSPORTS.mary.dataGroups[0].value, 95),
       country_list: rightPadCountryCodeArray(["ZKR", "FRA", "GBR", "USA"], 200),
-      comm_in: "0x0aa7611a314621850d217b19928af38909443d8b6bb5f2dee6907243d6f80c16",
-      private_nullifier: "0x287e4139c68b178bde9d7e2b1ef3a63df1ffe3283d80c0ae3b4f4b7b88b5a1b6",
+      comm_in: EXPECTED_MARY_COMM_IN,
+      private_nullifier: EXPECTED_MARY_NULLIFIER,
       service_scope: EXPECTED_SERVICE_SCOPE,
       service_subscope: EXPECTED_SERVICE_SUBSCOPE,
       salt: EXPECTED_SALT,
@@ -755,8 +760,8 @@ describe("Circuit Matcher - ECDSA", () => {
       country_list: rightPadCountryCodeArray(["FRA", "GBR", "USA"], 200).map((country) =>
         getCountryWeightedSum(country as Alpha3Code),
       ),
-      comm_in: "0x0aa7611a314621850d217b19928af38909443d8b6bb5f2dee6907243d6f80c16",
-      private_nullifier: "0x287e4139c68b178bde9d7e2b1ef3a63df1ffe3283d80c0ae3b4f4b7b88b5a1b6",
+      comm_in: EXPECTED_MARY_COMM_IN,
+      private_nullifier: EXPECTED_MARY_NULLIFIER,
       service_scope: EXPECTED_SERVICE_SCOPE,
       service_subscope: EXPECTED_SERVICE_SUBSCOPE,
       salt: EXPECTED_SALT,
@@ -771,8 +776,8 @@ describe("Circuit Matcher - ECDSA", () => {
     expect(result).toEqual({
       dg1: rightPadArrayWithZeros(PASSPORTS.mary.dataGroups[0].value, 95),
       current_date: format(new Date(), "yyyyMMdd"),
-      comm_in: "0x0aa7611a314621850d217b19928af38909443d8b6bb5f2dee6907243d6f80c16",
-      private_nullifier: "0x287e4139c68b178bde9d7e2b1ef3a63df1ffe3283d80c0ae3b4f4b7b88b5a1b6",
+      comm_in: EXPECTED_MARY_COMM_IN,
+      private_nullifier: EXPECTED_MARY_NULLIFIER,
       service_scope: EXPECTED_SERVICE_SCOPE,
       service_subscope: EXPECTED_SERVICE_SUBSCOPE,
       salt: EXPECTED_SALT,
@@ -789,8 +794,8 @@ describe("Circuit Matcher - ECDSA", () => {
     expect(result).toEqual({
       dg1: rightPadArrayWithZeros(PASSPORTS.mary.dataGroups[0].value, 95),
       current_date: format(new Date(), "yyyyMMdd"),
-      comm_in: "0x0aa7611a314621850d217b19928af38909443d8b6bb5f2dee6907243d6f80c16",
-      private_nullifier: "0x287e4139c68b178bde9d7e2b1ef3a63df1ffe3283d80c0ae3b4f4b7b88b5a1b6",
+      comm_in: EXPECTED_MARY_COMM_IN,
+      private_nullifier: EXPECTED_MARY_NULLIFIER,
       service_scope: EXPECTED_SERVICE_SCOPE,
       service_subscope: EXPECTED_SERVICE_SUBSCOPE,
       salt: EXPECTED_SALT,
@@ -799,12 +804,19 @@ describe("Circuit Matcher - ECDSA", () => {
     })
   })
 
-  // TODO
-  it("should get the correct sanctions circuit inputs", async () => {
-    // const query: Query = {
-    //   sanctions: true,
-    // }
-    // const result = await getSanctionsCircuitInputs(PASSPORTS.mary, query, 1n, 2n, 3n)
-    // expect(result).toEqual({
+  it("should get the correct sanctions exclusion check circuit inputs", async () => {
+    const sanctions = await SanctionsBuilder.create()
+    const {proofs, rootHash} = await sanctions.getSanctionsMerkleProofs(PASSPORTS.mary);
+    const result = await getSanctionsExclusionCheckCircuitInputs(PASSPORTS.mary, SALT, SERVICE_SCOPE, SERVICE_SUBSCOPE, sanctions)
+    expect(result).toEqual({
+      dg1: rightPadArrayWithZeros(PASSPORTS.mary.dataGroups[0].value, 95),
+      comm_in: EXPECTED_MARY_COMM_IN,
+      private_nullifier: EXPECTED_MARY_NULLIFIER,
+      root_hash: rootHash,
+      proofs,
+      service_scope: EXPECTED_SERVICE_SCOPE,
+      service_subscope: EXPECTED_SERVICE_SUBSCOPE,
+      salt: EXPECTED_SALT,
+    })
   })
 })
